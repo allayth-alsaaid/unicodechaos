@@ -327,7 +327,3 @@ Issues and pull requests are welcome. If Unicode encodes a new script, add its l
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
----
-
-> **Note:** This project was created using artificial intelligence.
