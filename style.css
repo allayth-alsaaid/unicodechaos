@@ -32,9 +32,10 @@
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; min-height: 100vh; color: var(--txt); background: var(--bg);
+  margin: 0; min-height: 100vh; min-height: 100svh; color: var(--txt); background: var(--bg);
   font-family: system-ui, "Segoe UI", Arial, sans-serif;
-  display: flex; justify-content: center; padding: 28px 14px 48px;
+  display: flex; justify-content: center;
+  padding: calc(28px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) calc(48px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   transition: background .25s, color .25s;
 }
 .card { width: min(880px, 100%); }
@@ -272,7 +273,7 @@ body.noscroll { overflow: hidden; }
 .tiny { color: var(--mut); font-size: 12px; text-align: center; margin: 4px 0 0; }
 
 @media (max-width: 560px) {
-  body { padding: 16px 10px 36px; }
+  body { padding: calc(16px + env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) calc(36px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
   .panel { padding: 16px; }
   #len { width: 100%; }
   .top { align-items: center; }
@@ -280,6 +281,24 @@ body.noscroll { overflow: hidden; }
   .foot { flex-direction: column; align-items: stretch; }
   .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; }
   .actions button { padding: 10px 6px; }
+}
+@media (max-width: 768px) {
+  input, select, textarea { font-size: 16px; }
+}
+@media (max-width: 480px) {
+  .top-actions { gap: 8px; }
+  #theme, .iconbtn { width: 40px; height: 40px; }
+  .modalback { padding: 3vh 8px; }
+  .modal { padding: 14px; }
+  .checkgrid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+  .advfoot { align-items: stretch; flex-direction: column; }
+  .advbtns { justify-content: flex-end; }
+  #seedHash { display: none; }
+}
+@media (max-width: 420px) {
+  #chaos { flex-basis: 100%; width: 100%; }
+  .scale { flex-wrap: wrap; row-gap: 4px; }
+  .seedrow { gap: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
