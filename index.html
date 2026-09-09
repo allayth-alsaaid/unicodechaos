@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark light" />
+<meta name="description" content="Unicode Chaos — mix 170 writing systems into maximum-diversity text." />
+<title>Unicode Chaos</title>
+<script>
+try {
+  var _l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('chaos-lang')
+    || ((navigator.language || 'en').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+  if (_l !== 'ar') _l = 'en';
+  document.documentElement.lang = _l;
+  document.documentElement.dir = _l === 'ar' ? 'rtl' : 'ltr';
+  var _t = localStorage.getItem('chaos-theme');
+  if (_t !== 'dark' && _t !== 'light') _t = (matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  document.documentElement.dataset.theme = _t;
+} catch (e) {}
+</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="theme-color" content="#101210" />
+<link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+<header class="nav">
+  <a class="navbrand" href="index.html">
+    <img src="favicon.svg" alt="" width="30" height="30" />
+    <span>Unicode Chaos</span>
+  </a>
+  <nav class="navactions" aria-label="primary">
+    <div class="langwrap">
+      <button id="langToggle" class="iconbtn" type="button" data-i18n-aria="language" aria-label="Language" aria-haspopup="menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="4" ry="8.5"/><line x1="3.5" y1="12" x2="20.5" y2="12" stroke-linecap="round"/></svg>
+      </button>
+      <div id="langMenu" class="langmenu" role="menu" hidden>
+        <button type="button" role="menuitemradio" data-lang="ar"><b>العربية</b><span>Arabic · right-to-left</span></button>
+        <button type="button" role="menuitemradio" data-lang="en"><b>English</b><span>الإنجليزية · left-to-right</span></button>
+      </div>
+    </div>
+    <button id="theme" type="button" data-i18n-aria="theme" aria-label="Dark / light">
+      <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="mcut"><rect width="24" height="24" fill="#fff"/><circle cx="17.5" cy="7.5" r="6.5" fill="#000"/></mask></defs><circle cx="12" cy="12" r="8" fill="currentColor" mask="url(#mcut)"/></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="2.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="21.5" y2="12"/><line x1="5.3" y1="5.3" x2="7.4" y2="7.4"/><line x1="16.6" y1="16.6" x2="18.7" y2="18.7"/><line x1="5.3" y1="18.7" x2="7.4" y2="16.6"/><line x1="16.6" y1="7.4" x2="18.7" y2="5.3"/></g></svg>
+    </button>
+    <a id="ghNav" class="ghlink" href="https://github.com/" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+    <a class="cta" href="generator.html" data-keeplang data-i18n="navCta">Open generator</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="herotext">
+      <p class="badge" data-i18n="heroBadge">Open source · Unicode 16</p>
+      <h1 data-i18n="heroH1">Every script on Earth in one text.</h1>
+      <p class="sub" data-i18n="heroSub">A generator that mixes 170 writing systems into maximum-diversity text. Pick a length, set the chaos, share the seed.</p>
+      <div class="herobtns">
+        <a class="cta big-cta" href="generator.html" data-keeplang data-i18n="navCta">Open generator</a>
+        <a class="ghost" href="#how" data-i18n="howLink">How it works</a>
+      </div>
+      <dl class="stats">
+        <div><dt data-count="170">0</dt><dd data-i18n="stScripts">scripts</dd></div>
+        <div><dt data-count="176">0</dt><dd data-i18n="stUnits">units max</dd></div>
+        <div><dt data-count="71">0</dt><dd data-i18n="stEmoji">emoji</dd></div>
+        <div><dt data-static="stZero">–</dt><dd data-i18n="stBackend">backend</dd></div>
+      </dl>
+    </div>
+    <div class="livepanel" aria-hidden="true">
+      <div class="livetop"><span class="livedot"></span><span data-i18n="liveTag">Live chaos</span><code id="ticker">…</code></div>
+      <canvas id="chaos"></canvas>
+    </div>
+  </section>
+
+  <section class="marquee" data-i18n-aria="marqueeLabel" aria-label="marquee">
+    <div class="track" id="mtrack"></div>
+  </section>
+
+  <section class="what">
+    <h2 data-i18n="whatH">Not readable on purpose.</h2>
+    <p data-i18n="whatP1">Unicode Chaos builds text for maximum variety, never meaning. Letters from 170 scripts collide with symbols, numerals and emoji.</p>
+    <p data-i18n="whatP2">Use it to stress-test fonts, preview multilingual rendering, make glitch art, or play with real entropy.</p>
+  </section>
+
+  <section class="steps" id="how">
+    <h2 data-i18n="stepsH">Three moves, endless output.</h2>
+    <ol>
+      <li><span class="idx">01</span><div><h3 data-i18n="s1h">Set length and chaos</h3><p data-i18n="s1p">Choose how many visible units appear and how wild the mix gets.</p></div></li>
+      <li><span class="idx">02</span><div><h3 data-i18n="s2h">Generate from real entropy</h3><p data-i18n="s2p">Every draw flows from OS randomness hashed with SHA-256.</p></div></li>
+      <li><span class="idx">03</span><div><h3 data-i18n="s3h">Share the exact seed</h3><p data-i18n="s3p">One link reproduces your text byte for byte.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="seedsec">
+    <div>
+      <h2 data-i18n="seedH">Your keyboard is the seed.</h2>
+      <p data-i18n="seedP">Type anything in Latin letters, even random mashing. It is hashed into a seed, so the same text always rebuilds the same chaos.</p>
+      <a class="cta" href="generator.html" data-keeplang data-i18n="navCta">Open generator</a>
+    </div>
+    <div class="ticketdemo" aria-hidden="true">
+      <code class="tin">asdf jkl; qwerpoi</code>
+      <span class="tarrow">↓ SHA-256</span>
+      <code class="tout" id="seedDemo">…</code>
+    </div>
+  </section>
+
+  <section class="cover">
+    <h2 data-i18n="coverH">Full Unicode coverage.</h2>
+    <p data-i18n="coverP">Every encoded script with real letters, derived from the official Unicode tables. Nothing hand-picked.</p>
+    <div class="coverNums">
+      <div><b data-count="90">0</b><span data-i18n="covModern">modern</span></div>
+      <div><b data-count="12">0</b><span data-i18n="covCjk">CJK</span></div>
+      <div><b data-count="68">0</b><span data-i18n="covAncient">ancient</span></div>
+    </div>
+  </section>
+
+  <section class="project" id="project">
+    <div>
+      <h2 data-i18n="projH">Open source, offline-friendly.</h2>
+      <p data-i18n="projP1">No backend, no account, no tracking. A static page that runs anywhere.</p>
+      <p data-i18n="projP2">Data: Unicode 16 tables. Code: yours to fork.</p>
+    </div>
+    <a id="ghBtn" class="cta" href="https://github.com/" target="_blank" rel="noopener"><span data-i18n="github">View on GitHub</span> <span aria-hidden="true">↗</span></a>
+  </section>
+</main>
+
+<footer>
+  <div class="fbrand"><img src="favicon.svg" alt="" width="22" height="22" /><b>Unicode Chaos</b><span data-i18n="footTag">Open-source chaos.</span></div>
+  <p data-i18n="footSrc">Built from the Unicode 16 tables.</p>
+</footer>
+
+<script src="js/site.js"></script>
+<script src="js/entropy.js"></script>
+<script src="js/landing.js"></script>
+</body>
+</html>

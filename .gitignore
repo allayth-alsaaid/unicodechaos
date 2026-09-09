@@ -1,0 +1,7 @@
+# Dev-only memory (working notes, not part of the product).
+MEMORY.md
+
+# OS / editor noise.
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark light" />
+<title>Unicode Chaos</title>
+<script>
+try {
+  var _l = new URLSearchParams(location.search).get('lang') || localStorage.getItem('chaos-lang')
+    || ((navigator.language || 'en').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+  if (_l !== 'ar') _l = 'en';
+  document.documentElement.lang = _l;
+  document.documentElement.dir = _l === 'ar' ? 'rtl' : 'ltr';
+  var _t = localStorage.getItem('chaos-theme');
+  if (_t !== 'dark' && _t !== 'light') _t = (matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  document.documentElement.dataset.theme = _t;
+} catch (e) {}
+</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="theme-color" content="#101210" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<main class="card">
+  <header class="top gen-top">
+    <a class="brandmark" href="index.html" data-keeplang data-i18n-aria="home" aria-label="Back to start"><img src="favicon.svg" alt="Unicode Chaos" width="46" height="46" /></a>
+    <div class="top-actions">
+      <button id="advBtn" class="iconbtn" type="button" data-i18n-aria="advanced" aria-label="Advanced settings" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></g><g fill="var(--card)" stroke="currentColor" stroke-width="1.8"><circle cx="9.5" cy="7" r="2.4"/><circle cx="15" cy="12" r="2.4"/><circle cx="8" cy="17" r="2.4"/></g></svg>
+        <span class="dot" id="advDot" hidden></span>
+      </button>
+      <div class="langwrap">
+        <button id="langToggle" class="iconbtn" type="button" data-i18n-aria="language" aria-label="Language" aria-haspopup="menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="4" ry="8.5"/><line x1="3.5" y1="12" x2="20.5" y2="12" stroke-linecap="round"/></svg>
+        </button>
+        <div id="langMenu" class="langmenu" role="menu" hidden>
+          <button type="button" role="menuitemradio" data-lang="ar"><b>العربية</b><span>Arabic · right-to-left</span></button>
+          <button type="button" role="menuitemradio" data-lang="en"><b>English</b><span>الإنجليزية · left-to-right</span></button>
+        </div>
+      </div>
+      <button id="theme" type="button" data-i18n-aria="theme" aria-label="Dark / light">
+        <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="mcut"><rect width="24" height="24" fill="#fff"/><circle cx="17.5" cy="7.5" r="6.5" fill="#000"/></mask></defs><circle cx="12" cy="12" r="8" fill="currentColor" mask="url(#mcut)"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="2.5" x2="12" y2="5.5"/><line x1="12" y1="18.5" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5.5" y2="12"/><line x1="18.5" y1="12" x2="21.5" y2="12"/><line x1="5.3" y1="5.3" x2="7.4" y2="7.4"/><line x1="16.6" y1="16.6" x2="18.7" y2="18.7"/><line x1="5.3" y1="18.7" x2="7.4" y2="16.6"/><line x1="16.6" y1="7.4" x2="18.7" y2="5.3"/></g></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <label class="row-label" for="len"><span data-i18n="length">Length</span> <span class="hint" data-i18n="lenHint">visible units · emoji = 1</span></label>
+    <div class="row">
+      <input id="len" type="number" value="2000" min="1" max="100000" />
+      <div class="presets">
+        <button data-preset="10">10</button>
+        <button data-preset="100">100</button>
+        <button data-preset="1000">1K</button>
+        <button data-preset="2000">2K</button>
+        <button data-preset="10000">10K</button>
+      </div>
+    </div>
+
+    <label class="row-label" for="chaos" data-i18n="chaos">Chaos level</label>
+    <div class="row">
+      <input id="chaos" type="range" min="0" max="100" value="100" />
+      <span id="chaosVal">100%</span>
+      <span id="levelName" class="badge" data-level="maximum">Maximum</span>
+    </div>
+    <div class="scale"><span class="tick" data-value="10" data-i18n="low">Low</span><span class="tick" data-value="40" data-i18n="medium">Medium</span><span class="tick" data-value="70" data-i18n="high">High</span><span class="tick" data-value="100" data-i18n="maximum">Maximum</span></div>
+
+    <div class="row switchrow">
+      <input type="checkbox" id="emojiToggle" class="switch" checked />
+      <label for="emojiToggle" class="switchlabel"><span data-i18n="emoji">Emoji</span> <span id="emojiState" class="hint">included</span></label>
+    </div>
+
+    <button id="generate" class="big" data-i18n="generate">Generate</button>
+  </section>
+
+  <section class="panel">
+    <div id="output" class="output" aria-live="polite" title="Click to select all" tabindex="0"></div>
+    <div class="seedrow">
+      <span class="seedlabel" data-i18n="seed">seed</span>
+      <code id="seed">—</code>
+      <button id="share" data-i18n="share">Copy link</button>
+      <button id="seedEdit" class="mini" data-i18n="edit">Edit</button>
+    </div>
+    <div class="seededit" id="seedEditRow" hidden>
+      <input id="customSeed" type="text" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="seedPh" placeholder="Type anything — even keyboard mashing…" maxlength="200" />
+      <button id="seedApply" class="mini" data-i18n="apply">Use</button>
+      <button id="seedRandom" class="mini" data-i18n="random">Random</button>
+      <code id="seedHash">—</code>
+    </div>
+    <p class="hint seedhint" id="seedHint" data-i18n="seedHint" hidden>Latin letters only · same text gives same output</p>
+    <div class="foot">
+      <span id="stats"></span>
+      <div class="actions">
+        <button id="copy" data-i18n="copy">Copy</button>
+        <button id="download">TXT</button>
+        <button id="clear" class="ghost" data-i18n="clear">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="tiny" data-i18n="tiny">Same link + same seed always reproduces the same text · Enter regenerates</p>
+</main>
+
+<div class="modalback" id="advModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="advTitle">
+    <div class="mhead">
+      <h2 id="advTitle" data-i18n="advanced">Advanced — choose scripts &amp; categories</h2>
+      <button id="advClose" class="iconbtn" type="button" data-i18n-aria="close" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></g></svg>
+      </button>
+    </div>
+    <input id="scriptFilter" type="search" data-i18n-ph="filterPh" placeholder="Filter scripts…" aria-label="Filter scripts" autocomplete="off" />
+    <div id="catList" class="catlist"></div>
+    <div id="scriptGroups"></div>
+    <div class="advfoot">
+      <span id="selCount" class="hint"></span>
+      <span class="advbtns"><button id="selAll" type="button" data-i18n="all">All</button><button id="selNone" type="button" data-i18n="none">None</button></span>
+    </div>
+  </div>
+</div>
+
+<script src="js/fallback-data.js"></script>
+<script src="js/entropy.js"></script>
+<script src="js/random.js"></script>
+<script src="js/weights.js"></script>
+<script src="js/diversity.js"></script>
+<script src="js/unicode.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/site.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
