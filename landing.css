@@ -30,8 +30,9 @@ body {
   padding: 14px max(20px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
   min-height: 64px;
 }
-.navbrand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--txt); font-weight: 800; font-size: 17px; }
-.navactions { display: flex; align-items: center; gap: 10px; }
+.navbrand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--txt); font-weight: 800; font-size: 17px; flex: 1 1 auto; min-width: 0; }
+.navbrand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.navactions { display: flex; align-items: center; gap: 10px; flex: none; }
 .langbtn {
   background: var(--card); color: var(--txt); border: 1px solid var(--line);
   border-radius: 9px; padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 700;
@@ -139,41 +140,50 @@ footer {
 .mdot { color: var(--acc); }
 @keyframes slide { to { transform: translateX(-50%); } }
 
-/* ---- sections: one message each, varied families ---- */
-section { padding: 56px 0; }
+/* ---- lower sections: one open ruled language, fully fluid (clamp/% only) ---- */
+main { counter-reset: chaos-sec; }
+section { padding: clamp(44px, 6vw, 76px) 0; }
+/* auto section numerals 01–05: new orienting elements, no translation needed */
+main > section:not(.hero):not(.marquee) h2::before {
+  counter-increment: chaos-sec; content: "0" counter(chaos-sec);
+  display: block; margin-bottom: 10px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px; font-weight: 700; letter-spacing: .22em; color: var(--acc);
+}
 .what h2, .steps h2, .seedsec h2, .cover h2, .project h2 {
   margin: 0 0 14px; font-size: clamp(24px, 3.4vw, 36px); font-weight: 800; line-height: 1.25;
 }
 .what p { margin: 0 0 12px; color: var(--mut); font-size: 16px; line-height: 1.7; max-width: 68ch; }
-.steps ol { list-style: none; margin: 22px 0 0; padding: 0; }
+.steps ol { list-style: none; margin: clamp(18px, 3vw, 28px) 0 0; padding: 0; border-block: 1px solid var(--line); }
 .steps li {
-  display: flex; gap: 20px; align-items: baseline; padding: 18px 0;
-  border-top: 1px solid var(--line);
+  display: flex; gap: clamp(14px, 2.4vw, 22px); align-items: baseline;
+  padding: clamp(16px, 2.6vw, 26px) 0;
 }
-.steps li:last-child { border-bottom: 1px solid var(--line); }
-.idx { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--acc); font-size: 15px; font-weight: 700; flex: none; }
+.steps li + li { border-top: 1px solid var(--line); }
+.idx { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--acc); font-size: clamp(15px, 2vw, 20px); font-weight: 700; flex: none; font-variant-numeric: tabular-nums; }
 .steps h3 { margin: 0 0 4px; font-size: 17px; }
 .steps p { margin: 0; color: var(--mut); font-size: 14px; line-height: 1.6; }
-.seedsec { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+.seedsec { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 36px); align-items: center; }
 .seedsec p { color: var(--mut); line-height: 1.7; margin: 0 0 20px; max-width: 52ch; }
 .ticketdemo {
-  border: 1px dashed var(--acc); border-radius: var(--radius); background: var(--card);
-  padding: 26px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  border: 0; border-inline-start: 2px solid var(--acc); border-radius: 0; background: none;
+  padding: clamp(12px, 2.4vw, 24px) clamp(14px, 2.6vw, 26px);
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
 }
 .ticketdemo code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px; }
 .tin { background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; direction: ltr; }
 .tarrow { color: var(--mut); font-size: 12px; }
 .tout { color: var(--acc); font-size: 16px; font-weight: 700; direction: ltr; }
 .cover p { color: var(--mut); line-height: 1.7; margin: 0 0 22px; max-width: 62ch; }
-.coverNums { display: flex; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); overflow: hidden; }
-.coverNums div { flex: 1; padding: 22px; display: flex; flex-direction: column; gap: 4px; }
+.coverNums { display: flex; border-block: 1px solid var(--line); }
+.coverNums div { flex: 1; padding: clamp(16px, 2.6vw, 26px) clamp(10px, 2vw, 22px); display: flex; flex-direction: column; gap: 4px; }
 .coverNums div + div { border-inline-start: 1px solid var(--line); }
 .coverNums b { font-size: clamp(28px, 4vw, 44px); font-weight: 800; font-variant-numeric: tabular-nums; }
 .coverNums span { color: var(--mut); font-size: 13px; }
 .project {
-  border: 1px solid var(--line); border-radius: var(--radius); background: var(--card);
-  padding: 30px; display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap;
-  box-shadow: var(--shadow);
+  border: 0; border-block: 1px solid var(--line); border-radius: 0; background: none;
+  padding: clamp(22px, 3.4vw, 34px) 0;
+  display: flex; gap: clamp(16px, 3vw, 28px); align-items: center; justify-content: space-between; flex-wrap: wrap;
 }
 .project h2 { margin-top: 0; }
 .project p { color: var(--mut); line-height: 1.7; margin: 0 0 8px; max-width: 60ch; }
@@ -207,10 +217,12 @@ footer p { margin: 0; }
 
 @media (max-width: 860px) {
   .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 24px; }
-  .livepanel { min-height: 300px; }
+  /* stable mobile panel: fixed height per breakpoint, isolated repaints —
+     URL-bar/zoom churn never moves it (JS only follows real width changes) */
+  .livepanel { min-height: 0; contain: layout paint; }
+  #chaos { flex: none; height: 300px; min-height: 0; }
   .seedsec { grid-template-columns: 1fr; }
   .ghlink { display: none; }
-  section { padding: 40px 0; }
   input, select, textarea { font-size: 16px; }
 }
 
@@ -220,10 +232,10 @@ footer p { margin: 0; }
   .iconbtn, #theme { width: 38px; height: 38px; }
   .stats { gap: 18px; }
   .stats dt { font-size: 22px; }
-  .livepanel { min-height: 260px; }
-  #chaos { min-height: 260px; }
-  .coverNums div { padding: 14px; }
-  section { padding: 34px 0; }
+  .livepanel { min-height: 0; }
+  #chaos { flex: none; height: 260px; min-height: 0; }
+  .coverNums { flex-direction: column; }
+  .coverNums div + div { border-inline-start: 0; border-block-start: 1px solid var(--line); }
 }
 
 @media (max-width: 400px) {

@@ -125,32 +125,54 @@
       { size: 17, alpha: 0.34, fall: 0.48, repel: 0.85, sway: 9 },
       { size: 23, alpha: 0.50, fall: 0.75, repel: 1.35, sway: 15 }
     ];
+    function targetCount(w, h) { return Math.max(180, Math.min(420, Math.round(w * h / 3000))); }
+    function newParticle() {
+      return {
+        x: Math.random() * W, y: Math.random() * H,
+        vx: 0, vy: 0, layer: (Math.random() * 3) | 0,
+        g: glyphs[(Math.random() * glyphs.length) | 0],
+        ph: Math.random() * Math.PI * 2, sp: 0.5 + Math.random() * 0.8,
+        accent: Math.random() < 0.12
+      };
+    }
     function seedField() {
       P = [];
-      var n = Math.max(180, Math.min(420, Math.round(W * H / 3000)));
-      for (var i = 0; i < n; i++) {
-        P.push({
-          x: Math.random() * W, y: Math.random() * H,
-          vx: 0, vy: 0, layer: (Math.random() * 3) | 0,
-          g: glyphs[(Math.random() * glyphs.length) | 0],
-          ph: Math.random() * Math.PI * 2, sp: 0.5 + Math.random() * 0.8,
-          accent: Math.random() < 0.12
-        });
-      }
+      targetN = targetCount(W, H);
+      for (var i = 0; i < targetN; i++) P.push(newParticle());
     }
-    function size() {
+    // Dynamic bounds: the canvas end tracks its container automatically —
+    // any window/screen/zoom change flows in through ResizeObserver below.
+    // Desktop follows width AND height; touch follows width only (ignores
+    // height-only churn like the mobile URL bar) for a stable panel.
+    // Existing particles survive resizes (clamped in); the crowd eases
+    // toward the new target count over frames — never a jump, never fixed.
+    var firstSize = true, targetN = 0, lastW = 0, lastH = 0;
+    function size(force) {
       var r = cv.parentElement.getBoundingClientRect();
       var dpr = Math.min(2, window.devicePixelRatio || 1);
-      W = Math.max(50, r.width); H = Math.max(50, r.height);
+      var w = Math.max(50, Math.round(r.width)), h = Math.max(50, Math.round(r.height));
+      if (!force && w === lastW && (h === lastH || !fieldMode)) return false;
+      lastW = w; lastH = h; W = w; H = h;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fs = 17; cols = Math.ceil(W / (fs * 1.15)); drops = [];
       for (var i = 0; i < cols; i++) drops.push(Math.random() * -H / fs);
       R = fieldMode ? Math.max(77, Math.min(126, Math.min(W, H) * 0.21))
                     : Math.max(70, Math.min(150, Math.min(W, H) * 0.30));
-      if (fieldMode) seedField();
+      if (fieldMode) {
+        if (firstSize || !P.length) { seedField(); }
+        else {
+          for (var j = 0; j < P.length; j++) {
+            if (P[j].x > W) P[j].x = Math.random() * W;
+            if (P[j].y > H) P[j].y = Math.random() * H;
+          }
+          targetN = targetCount(W, H);
+        }
+      }
+      firstSize = false;
+      return true;
     }
-    size();
+    size(true);
     var panel = cv.parentElement;
     var hero = (panel && panel.closest) ? (panel.closest('.hero') || cv) : cv;
     if (fineHover && !reduce) {
@@ -179,7 +201,24 @@
       visible = ioVisible;
       kick();
     }
-    window.addEventListener('resize', function () { size(); behindNav(); refresh(); });
+    window.addEventListener('resize', requestSize);
+    window.addEventListener('orientationchange', requestSize);
+    var rsT = null;
+    function requestSize() {
+      if (rsT) return; // debounce: settle once the window stops changing
+      rsT = setTimeout(function () {
+        rsT = null;
+        if (size(false)) behindNav();
+        refresh();
+      }, 120);
+    }
+    try {
+      // Fully automatic bounds: ANY hero/panel size change (window, zoom,
+      // fonts, content, browser chrome) resizes the canvas end — no fixed sizes.
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(function () { requestSize(); }).observe(fieldMode ? hero : panel);
+      }
+    } catch (e) { /* resize listener above is the fallback */ }
     try {
       ioVisible = false; // let the observer decide (fires immediately)
       new IntersectionObserver(function (es) {
@@ -192,6 +231,13 @@
       var bgc = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#101210';
       ctx.fillStyle = bgc;
       ctx.fillRect(0, 0, W, H);
+      // Ease the crowd toward the target after a resize (grow a few per
+      // frame, shrink at once with hysteresis) — the end stays filled.
+      if (P.length < targetN) {
+        for (var k = 0; k < 4 && P.length < targetN; k++) P.push(newParticle());
+      } else if (P.length > targetN + 20) {
+        P.length = targetN;
+      }
       var useMouse = fineHover && mouseIn;
       for (var i = 0; i < P.length; i++) {
         var p = P[i], L = LAYERS[p.layer];
