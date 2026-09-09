@@ -164,16 +164,22 @@ main > section:not(.hero):not(.marquee) h2::before {
   margin: 0 0 14px; font-size: clamp(24px, 3.4vw, 36px); font-weight: 800; line-height: 1.25;
 }
 .what p { margin: 0 0 12px; color: var(--mut); font-size: 16px; line-height: 1.7; max-width: 68ch; }
-/* ---- specimens wall: live samples from twelve writing systems ---- */
+/* ---- specimens wall: live drifting samples from ten writing systems ---- */
+.spec-simple { display: none; }
 .specsub { color: var(--mut); line-height: 1.7; margin: 0 0 clamp(18px, 3vw, 28px); max-width: 62ch; }
-.specgrid { display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+.specgrid { display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
 .spec {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   padding: clamp(16px, 2.2vw, 22px); min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
   transition: border-color .2s, transform .2s;
 }
 .spec:hover { border-color: var(--acc); transform: translateY(-3px); }
-.spec p { margin: 0; font-size: clamp(19px, 2.2vw, 26px); line-height: 1.65; max-height: calc(1.65em * 3); overflow: hidden; overflow-wrap: anywhere; }
+.spec p { margin: 0; font-size: clamp(19px, 2.2vw, 26px); line-height: 1.65; max-height: calc(1.65em * 3); overflow: hidden; overflow-wrap: anywhere; animation: drift 9s ease-in-out infinite alternate; }
+.spec:nth-child(odd) p { animation-direction: alternate-reverse; }
+.spec:nth-child(3n) p { animation-duration: 12s; }
+.spec:nth-child(3n+1) p { animation-duration: 7s; }
+.spec:hover p { animation-play-state: paused; }
+@keyframes drift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
 .spec span { color: var(--mut); font-size: 12px; font-weight: 700; letter-spacing: .04em; }
 /* ---- uses grid: same card language ---- */
 .usegrid { display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); margin-top: clamp(20px, 3vw, 30px); }
@@ -209,14 +215,26 @@ main > section:not(.hero):not(.marquee) h2::before {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   padding: clamp(18px, 2.6vw, 26px); display: flex; flex-direction: column; gap: 12px; min-width: 0;
 }
-.labTag { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 700; letter-spacing: .22em; color: var(--acc); }
+.labChrome { display: flex; align-items: center; gap: 7px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.labChrome i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); flex: none; }
+.labChrome i:first-child { background: var(--acc); }
+.labChrome span { margin-inline-start: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .22em; color: var(--mut); }
 .labTxt { margin: 0; font-size: clamp(17px, 2vw, 22px); line-height: 1.7; overflow-wrap: anywhere; min-height: calc(1.7em * 4); }
+.labTxt::after { content: "▍"; color: var(--acc); animation: blink 1.1s steps(2, start) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 .labRow {
   display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
   border-top: 1px solid var(--line); padding-top: 12px;
   font-size: 12px; color: var(--mut);
 }
 .labRow code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; color: var(--acc); direction: ltr; }
+.labCopy {
+  margin-inline-start: auto; background: none; color: var(--txt);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: border-color .15s;
+}
+.labCopy:hover { border-color: var(--acc); }
 /* ---- coverage: full-bleed wash band, giant numerals ---- */
 .cover {
   width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
@@ -282,6 +300,14 @@ footer p { margin: 0; }
      URL-bar/zoom churn never moves it (JS only follows real width changes) */
   .livepanel { min-height: 0; contain: layout paint; }
   #chaos { flex: none; height: 300px; min-height: 0; }
+  /* mobile: specimens wall replaced by one calm static strip (no newspaper) */
+  .specimens { display: none; }
+  .spec-simple {
+    display: block; margin: clamp(10px, 3vw, 18px) 0; padding: 12px 8px;
+    border-block: 1px solid var(--line); text-align: center;
+    font-size: 17px; letter-spacing: .3em; color: var(--mut);
+    white-space: nowrap; overflow: hidden;
+  }
   .seedsec { grid-template-columns: 1fr; }
   .ghlink { display: none; }
   input, select, textarea { font-size: 16px; }

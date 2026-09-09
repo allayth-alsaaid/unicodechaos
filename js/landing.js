@@ -95,8 +95,6 @@
     heb: 'אבגדהוזחטיכלמנסעפצקרשת',
     cyr: 'АбВгДжЖзИйКлМнОпРстУфХцЧшЩэЮя',
     ell: 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩω',
-    arm: 'ԱաԲբԳգԴդԵեԶզԷէԹթԺժԻիԼլԽխԾծԿկՀհՁձՂղՃճՄմՅյՆնՇշՈոՉչՊպՋջՌռՍսՎվՏտՐրՑցՓփՔքՕօՖֆ',
-    geo: 'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ',
     dev: 'अआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह',
     tha: 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ',
     kor: '가나다라마바사아자차카타파하각간갇갈감갑값갓강같',
@@ -131,7 +129,7 @@
     try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     if (reduce) return;
     setInterval(function () {
-      if (document.hidden) return;
+      if (document.hidden || !els[0].offsetParent) return; // wall hidden (mobile) — stay idle
       fill(els[(Math.random() * els.length) | 0]);
     }, 3000);
   }
@@ -161,6 +159,30 @@
     }
     input.addEventListener('input', render);
     render();
+    var copyBtn = document.getElementById('labCopy');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      var txt = out.textContent;
+      function flash(ok) {
+        var original = copyBtn.getAttribute('data-label') || copyBtn.textContent;
+        copyBtn.setAttribute('data-label', original);
+        copyBtn.textContent = ChaosSite.T(ok ? 'copied' : 'copy');
+        setTimeout(function () { copyBtn.textContent = copyBtn.getAttribute('data-label'); }, 1200);
+      }
+      function legacyCopy() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = txt; ta.setAttribute('readonly', '');
+          ta.style.position = 'absolute'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          flash(!!ok);
+        } catch (e) { flash(false); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(function () { flash(true); }, legacyCopy);
+      } else legacyCopy();
+    });
   }
 
   function ticker() {

@@ -91,8 +91,6 @@ try {
       <article class="spec"><p data-pool="heb">אבגדהוזח</p><span>עברית</span></article>
       <article class="spec"><p data-pool="cyr">АбВгДжЖз</p><span>Кириллица</span></article>
       <article class="spec"><p data-pool="ell">ΑαΒβΓγΔδ</p><span>Ελληνικά</span></article>
-      <article class="spec"><p data-pool="arm">ԱաԲբԳգԴդ</p><span>Հայերեն</span></article>
-      <article class="spec"><p data-pool="geo">აბგდევზთ</p><span>ქართული</span></article>
       <article class="spec"><p data-pool="dev">अआइईउऊ</p><span>देवनागरी</span></article>
       <article class="spec"><p data-pool="tha">กขฃคฅฆง</p><span>ไทย</span></article>
       <article class="spec"><p data-pool="kor">가나다라마</p><span>한글</span></article>
@@ -100,6 +98,7 @@ try {
       <article class="spec"><p data-pool="hir">あいうえお</p><span>ひらがな</span></article>
     </div>
   </section>
+  <p class="spec-simple" aria-hidden="true" dir="ltr">Aa ا ب ت אבג ЖюЯ ΩΨ 文あ한 ★☾</p>
 
   <section class="steps" id="how">
     <h2 data-i18n="stepsH">Three moves, endless output.</h2>
@@ -118,9 +117,9 @@ try {
       <a class="cta" href="generator.html" data-keeplang data-i18n="navCta">Open generator</a>
     </div>
     <div class="labOut">
-      <span class="labTag" data-i18n="labOut">output</span>
+      <div class="labChrome" aria-hidden="true"><i></i><i></i><i></i><span data-i18n="labOut">output</span></div>
       <p class="labTxt" id="labTxt" dir="ltr">…</p>
-      <div class="labRow"><span data-i18n="labSeed">seed</span><code id="seedDemo">…</code></div>
+      <div class="labRow"><span data-i18n="labSeed">seed</span><code id="seedDemo">…</code><button id="labCopy" class="labCopy" type="button" data-i18n="copy">Copy</button></div>
     </div>
   </section>
 
