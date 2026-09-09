@@ -133,7 +133,9 @@ footer {
 #chaos { flex: 1; width: 100%; min-height: 320px; display: block; background: var(--field); }
 
 /* ---- one marquee for the whole page (full-bleed line, edge to edge) ---- */
-.marquee { border-block: 1px solid var(--line); margin: 10px calc(50% - 50vw) 0; width: 100vw; max-width: 100vw; overflow: hidden; direction: ltr; }
+/* thin strip only: exempt from section padding so no dead band eats the fold;
+   sits above the field overscan (z-index) with glyphs raining behind its text */
+.marquee { border-block: 1px solid var(--line); margin: 0 calc(50% - 50vw) 0; padding: 0; width: 100vw; max-width: 100vw; overflow: hidden; direction: ltr; position: relative; z-index: 1; }
 .track { display: inline-flex; align-items: center; gap: 26px; padding: 12px 0; white-space: nowrap; opacity: .8; animation: slide 90s linear infinite; }
 .mitem b { font-size: 17px; font-weight: 700; margin-inline-end: 8px; }
 .mitem i { font-style: normal; color: var(--mut); font-size: 12px; }
@@ -199,8 +201,10 @@ footer p { margin: 0; }
 @media (hover: hover) and (pointer: fine) {
   .nav { position: relative; z-index: 2; }
   .hero {
-    grid-template-columns: 1fr; position: relative; overflow: hidden;
+    grid-template-columns: 1fr; position: relative; overflow-x: clip; overflow-y: visible;
     width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
+    /* exact first slide: fills the viewport so the fold = hero end + strip */
+    min-height: 100svh; min-height: 100dvh;
   }
   .herotext { position: relative; z-index: 1; max-width: 840px; margin: 0 auto; text-align: center; }
   .herotext .sub { margin-inline: auto; }
@@ -208,7 +212,9 @@ footer p { margin: 0; }
   .herobtns .ghost { display: none; }
   .stats { justify-content: center; }
   .livepanel {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    position: absolute; inset: 0 0 -12vh; z-index: 0; pointer-events: none;
+    /* overscan: field rains past the fold under the strip — bigger than
+       needed at any window size, so no void can ever remain at the end */
     border: 0; border-radius: 0; background: transparent; box-shadow: none; min-height: 0;
   }
   .livetop { display: none; }
