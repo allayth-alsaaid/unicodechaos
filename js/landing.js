@@ -160,21 +160,26 @@
       });
       hero.addEventListener('mouseleave', function () { mouseIn = false; });
     }
-    var ioVisible = true, nearTop = true, visible = true, running = false;
+    // One continuous field behind nav + hero: pull the hero under the bar
+    // (measured, never hardcoded) so glyphs reach the exact viewport top.
+    function behindNav() {
+      if (!fieldMode) return;
+      var nav = document.querySelector('.nav');
+      if (!nav || !hero || !hero.style) return;
+      var h = nav.offsetHeight || 0;
+      hero.style.marginTop = (-h) + 'px';
+      hero.style.paddingTop = (36 + h) + 'px';
+    }
+    behindNav();
+    var ioVisible = true, visible = true, running = false;
     function kick() {
       if (visible && !reduce && !running) { running = true; requestAnimationFrame(frame); }
     }
     function refresh() {
-      visible = ioVisible && nearTop;
+      visible = ioVisible;
       kick();
     }
-    function onScroll() {
-      nearTop = (window.scrollY || window.pageYOffset || 0) < window.innerHeight * 0.22;
-      refresh();
-    }
-    window.addEventListener('resize', function () { size(); onScroll(); });
-    try { window.addEventListener('scroll', onScroll, { passive: true }); }
-    catch (e) { window.addEventListener('scroll', onScroll); }
+    window.addEventListener('resize', function () { size(); behindNav(); refresh(); });
     try {
       ioVisible = false; // let the observer decide (fires immediately)
       new IntersectionObserver(function (es) {
@@ -243,7 +248,7 @@
       requestAnimationFrame(frame);
     }
     if (reduce) frameOnce();
-    else { onScroll(); refresh(); }
+    else { refresh(); }
     function frameOnce() {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--field') || '#121412';
       ctx.fillRect(0, 0, W, H);

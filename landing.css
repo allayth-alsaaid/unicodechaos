@@ -187,6 +187,7 @@ footer p { margin: 0; }
 
 /* ---- desktop (fine pointer): no chaos box — full-hero glyph field behind everything ---- */
 @media (hover: hover) and (pointer: fine) {
+  .nav { position: relative; z-index: 2; }
   .hero {
     grid-template-columns: 1fr; position: relative; overflow: hidden;
     width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
