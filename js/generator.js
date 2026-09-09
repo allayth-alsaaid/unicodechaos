@@ -1,44 +1,60 @@
-// generator.js — multi-stage: Category -> Script/Block -> Character, uniform random.
-// Every draw is independent and equally likely: uniform category, uniform
-// script, uniform code point. No weights, no boosts, no anti-repeat rules.
+// generator.js — flat uniform pool: every script and every list-category
+// equally likely (~1/176 each). Every draw independent, no weights, no bans.
 (function (global) {
   const R = () => global.ChaosRandom;
   const U = () => global.ChaosUnicode;
 
-  const ALL_CATS = ['scripts', 'symbols', 'emoji', 'numbers', 'punctuation', 'currency', 'other'];
+  const LIST_KEYS = ['symbols', 'emoji', 'numbers', 'punctuation', 'currency', 'other'];
 
-  function pickScript(data, enabledScripts) {
-    let pool = data.scripts;
-    if (enabledScripts) {
-      const sub = pool.filter(s => enabledScripts.has(s.id));
-      if (sub.length) pool = sub; // empty selection falls back to all (never break)
+  // One entry per script plus one per list-category: 170 scripts + 6 lists.
+  // User selection filters the pool; an explicitly-emptied pool falls back
+  // to everything (never break, never crash).
+  function buildPool(data, opts, emojiOn, lists) {
+    const enabledScripts = opts.enabledScripts ? new Set(opts.enabledScripts) : null;
+    const enabledCats = opts.enabledCats || null;
+    const catsOn = k => !enabledCats || enabledCats[k] !== false;
+    const pool = [];
+    if (catsOn('scripts')) {
+      let scripts = data.scripts;
+      if (enabledScripts) {
+        const sub = scripts.filter(s => enabledScripts.has(s.id));
+        if (sub.length) scripts = sub; // empty selection falls back to all
+      }
+      for (const s of scripts) pool.push({ kind: 'script', script: s });
     }
-    return R().pick(pool);
+    for (const k of LIST_KEYS) {
+      if (k === 'emoji' && !emojiOn) continue;
+      if (!catsOn(k)) continue;
+      if (!lists[k] || !lists[k].length) continue;
+      pool.push({ kind: 'list', key: k });
+    }
+    if (!pool.length) {
+      for (const s of data.scripts) pool.push({ kind: 'script', script: s });
+      for (const k of LIST_KEYS) {
+        if (k === 'emoji' && !emojiOn) continue;
+        if (lists[k] && lists[k].length) pool.push({ kind: 'list', key: k });
+      }
+    }
+    return pool;
   }
 
   function generate(data, opts) {
     const length = Math.max(1, Math.min(100000, opts.length | 0 || 2000));
     const emojiOn = opts.emojiOn !== false; // explicit outside toggle
-    // Custom selection (advanced settings). Null = everything enabled.
-    const enabledScripts = opts.enabledScripts ? new Set(opts.enabledScripts) : null;
-    const enabledCats = opts.enabledCats || null;
     // Strict emoji-off: exclude every Emoji=Yes char (Unicode tables) from
     // ALL curated lists — symbols, numbers, punctuation, currency, other —
     // plus scripts (audited clean, filtered anyway). ASCII 0-9/#/∗ stay.
     const emojiOff = !emojiOn;
     const noEmoji = ch => !U().isEmojiChar(ch);
-    const symbolList = emojiOff ? data.symbolList.filter(noEmoji) : data.symbolList;
-    const numberList = emojiOff ? data.numberList.filter(noEmoji) : data.numberList;
-    const punctList = emojiOff ? data.unicode.punctuation.filter(noEmoji) : data.unicode.punctuation;
-    const currList = emojiOff ? data.unicode.currency.filter(noEmoji) : data.unicode.currency;
-    const otherList = emojiOff ? data.unicode.other.filter(noEmoji) : data.unicode.other;
-
-    // Uniform category list: user selection respected, nothing else.
-    let cats = ALL_CATS.filter(k => k !== 'emoji' || emojiOn);
-    if (enabledCats) {
-      const sub = cats.filter(k => enabledCats[k] !== false);
-      if (sub.length) cats = sub; // empty selection falls back to all
-    }
+    const lists = {
+      symbols: emojiOff ? data.symbolList.filter(noEmoji) : data.symbolList,
+      emoji: data.emoji,
+      numbers: emojiOff ? data.numberList.filter(noEmoji) : data.numberList,
+      punctuation: emojiOff ? data.unicode.punctuation.filter(noEmoji) : data.unicode.punctuation,
+      currency: emojiOff ? data.unicode.currency.filter(noEmoji) : data.unicode.currency,
+      other: emojiOff ? data.unicode.other.filter(noEmoji) : data.unicode.other
+    };
+    const pool = buildPool(data, opts, emojiOn, lists);
 
     // Forced combined entropy: every draw of this generation flows from
     // SHA256(OS_crypto || microsecond_time || counter). A ?seed= link restores
@@ -54,31 +70,20 @@
     try {
 
     const out = [];         // grapheme units (emoji = 1 unit)
-    const meta = [];        // parallel category/script labels for stats
+    const meta = [];        // parallel script/list labels for stats
 
-    // One pipeline step: uniform category -> uniform script -> uniform char.
+    // One pipeline step: uniform entry -> uniform char.
     // Returns true when a unit was appended.
     function step() {
-      const cat = R().pick(cats);
-      let ch = '', label = cat;
-
-      if (cat === 'scripts') {
-        const script = pickScript(data, enabledScripts);
-        ch = U().randomCharFromScript(script, emojiOff);
-        label = script.id;
-      } else if (cat === 'symbols') {
-        ch = R().pick(symbolList);
-      } else if (cat === 'emoji') {
-        ch = R().pick(data.emoji);
-        // emoji sequences count as ONE unit — never split
-      } else if (cat === 'numbers') {
-        ch = R().pick(numberList);
-      } else if (cat === 'punctuation') {
-        ch = R().pick(punctList);
-      } else if (cat === 'currency') {
-        ch = R().pick(currList);
+      const e = R().pick(pool);
+      let ch = '', label;
+      if (e.kind === 'script') {
+        ch = U().randomCharFromScript(e.script, emojiOff);
+        label = e.script.id;
       } else {
-        ch = R().pick(otherList);
+        ch = R().pick(lists[e.key]);
+        label = e.key;
+        // emoji sequences count as ONE unit — never split
       }
 
       if (!ch) return false;
