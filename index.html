@@ -82,6 +82,25 @@ try {
     <p data-i18n="whatP2">Use it to stress-test fonts, preview multilingual rendering, make glitch art, or play with real entropy.</p>
   </section>
 
+  <section class="specimens">
+    <h2 data-i18n="specH">Fresh chaos, every visit.</h2>
+    <p class="specsub" data-i18n="specP">Live samples pulled from twelve writing systems.</p>
+    <div class="specgrid" id="specgrid">
+      <article class="spec"><p data-pool="lat" dir="ltr">AaBbCcDdEe</p><span>Latin</span></article>
+      <article class="spec"><p data-pool="ara">ا ب ت ث ج ح</p><span>العربية</span></article>
+      <article class="spec"><p data-pool="heb">אבגדהוזח</p><span>עברית</span></article>
+      <article class="spec"><p data-pool="cyr">АбВгДжЖз</p><span>Кириллица</span></article>
+      <article class="spec"><p data-pool="ell">ΑαΒβΓγΔδ</p><span>Ελληνικά</span></article>
+      <article class="spec"><p data-pool="arm">ԱաԲբԳգԴդ</p><span>Հայերեն</span></article>
+      <article class="spec"><p data-pool="geo">აბგდევზთ</p><span>ქართული</span></article>
+      <article class="spec"><p data-pool="dev">अआइईउऊ</p><span>देवनागरी</span></article>
+      <article class="spec"><p data-pool="tha">กขฃคฅฆง</p><span>ไทย</span></article>
+      <article class="spec"><p data-pool="kor">가나다라마</p><span>한글</span></article>
+      <article class="spec"><p data-pool="han">文語字漢字</p><span>漢字</span></article>
+      <article class="spec"><p data-pool="hir">あいうえお</p><span>ひらがな</span></article>
+    </div>
+  </section>
+
   <section class="steps" id="how">
     <h2 data-i18n="stepsH">Three moves, endless output.</h2>
     <ol>
@@ -95,12 +114,13 @@ try {
     <div>
       <h2 data-i18n="seedH">Your keyboard is the seed.</h2>
       <p data-i18n="seedP">Type anything in Latin letters, even random mashing. It is hashed into a seed, so the same text always rebuilds the same chaos.</p>
+      <input id="labIn" class="labIn" type="text" dir="ltr" value="asdf jkl; qwerpoi" maxlength="120" autocomplete="off" spellcheck="false" data-i18n-ph="labPh" data-i18n-aria="labPh" aria-label="Seed text" placeholder="Type anything…" />
       <a class="cta" href="generator.html" data-keeplang data-i18n="navCta">Open generator</a>
     </div>
-    <div class="ticketdemo" aria-hidden="true">
-      <code class="tin">asdf jkl; qwerpoi</code>
-      <span class="tarrow">↓ SHA-256</span>
-      <code class="tout" id="seedDemo">…</code>
+    <div class="labOut">
+      <span class="labTag" data-i18n="labOut">output</span>
+      <p class="labTxt" id="labTxt" dir="ltr">…</p>
+      <div class="labRow"><span data-i18n="labSeed">seed</span><code id="seedDemo">…</code></div>
     </div>
   </section>
 
@@ -111,6 +131,16 @@ try {
       <div><b data-count="90">0</b><span data-i18n="covModern">modern</span></div>
       <div><b data-count="12">0</b><span data-i18n="covCjk">CJK</span></div>
       <div><b data-count="68">0</b><span data-i18n="covAncient">ancient</span></div>
+    </div>
+  </section>
+
+  <section class="uses">
+    <h2 data-i18n="usesH">What is it for?</h2>
+    <div class="usegrid">
+      <article><span class="uidx">01</span><h3 data-i18n="u1h">Stress-test fonts</h3><p data-i18n="u1p">Fill any typeface with every script at once and watch where it breaks.</p></article>
+      <article><span class="uidx">02</span><h3 data-i18n="u2h">Glitch art</h3><p data-i18n="u2p">Export raw entropy as texture for posters and covers.</p></article>
+      <article><span class="uidx">03</span><h3 data-i18n="u3h">Entropy experiments</h3><p data-i18n="u3p">Watch randomness turn into structure, seed by seed.</p></article>
+      <article><span class="uidx">04</span><h3 data-i18n="u4h">Multilingual mockups</h3><p data-i18n="u4p">Preview how real interfaces feel in any script.</p></article>
     </div>
   </section>
 

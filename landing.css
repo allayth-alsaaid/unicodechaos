@@ -155,49 +155,97 @@ main > section:not(.hero):not(.marquee) h2::before {
   font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: 13px; font-weight: 700; letter-spacing: .22em; color: var(--acc);
 }
-.what h2, .steps h2, .seedsec h2, .cover h2, .project h2 {
+.what h2, .specimens h2, .steps h2, .seedsec h2, .cover h2, .uses h2, .project h2 {
   margin: 0 0 14px; font-size: clamp(24px, 3.4vw, 36px); font-weight: 800; line-height: 1.25;
 }
 .what p { margin: 0 0 12px; color: var(--mut); font-size: 16px; line-height: 1.7; max-width: 68ch; }
-.steps ol { list-style: none; margin: clamp(18px, 3vw, 28px) 0 0; padding: 0; border-block: 1px solid var(--line); }
-.steps li {
-  display: flex; gap: clamp(14px, 2.4vw, 22px); align-items: baseline;
-  padding: clamp(16px, 2.6vw, 26px) 0;
+/* ---- specimens wall: live samples from twelve writing systems ---- */
+.specsub { color: var(--mut); line-height: 1.7; margin: 0 0 clamp(18px, 3vw, 28px); max-width: 62ch; }
+.specgrid { display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+.spec {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(16px, 2.2vw, 22px); min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+  transition: border-color .2s, transform .2s;
 }
-.steps li + li { border-top: 1px solid var(--line); }
-.idx { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--acc); font-size: clamp(15px, 2vw, 20px); font-weight: 700; flex: none; font-variant-numeric: tabular-nums; }
-.steps h3 { margin: 0 0 4px; font-size: 17px; }
-.steps p { margin: 0; color: var(--mut); font-size: 14px; line-height: 1.6; }
+.spec:hover { border-color: var(--acc); transform: translateY(-3px); }
+.spec p { margin: 0; font-size: clamp(19px, 2.2vw, 26px); line-height: 1.65; max-height: calc(1.65em * 3); overflow: hidden; overflow-wrap: anywhere; }
+.spec span { color: var(--mut); font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+/* ---- uses grid: same card language ---- */
+.usegrid { display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); margin-top: clamp(20px, 3vw, 30px); }
+.usegrid article {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(20px, 2.6vw, 28px); display: flex; flex-direction: column; gap: 8px;
+  transition: border-color .2s, transform .2s;
+}
+.usegrid article:hover { border-color: var(--acc); transform: translateY(-3px); }
+.uidx { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--acc); font-size: 13px; font-weight: 700; letter-spacing: .22em; }
+.usegrid h3 { margin: 0; font-size: clamp(16px, 1.8vw, 19px); }
+.usegrid p { margin: 0; color: var(--mut); font-size: 14px; line-height: 1.65; }
+.steps ol { list-style: none; margin: clamp(20px, 3vw, 30px) 0 0; padding: 0; display: grid; gap: clamp(12px, 2vw, 20px); grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
+.steps li {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(20px, 2.6vw, 28px); display: flex; flex-direction: column; gap: 8px;
+  transition: border-color .2s, transform .2s;
+}
+.steps li:hover { border-color: var(--acc); transform: translateY(-3px); }
+.idx { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--acc); font-size: clamp(26px, 3.4vw, 40px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.steps h3 { margin: 0; font-size: clamp(16px, 1.8vw, 19px); }
+.steps p { margin: 0; color: var(--mut); font-size: 14px; line-height: 1.65; }
 .seedsec { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 36px); align-items: center; }
 .seedsec p { color: var(--mut); line-height: 1.7; margin: 0 0 20px; max-width: 52ch; }
-.ticketdemo {
-  border: 0; border-inline-start: 2px solid var(--acc); border-radius: 0; background: none;
-  padding: clamp(12px, 2.4vw, 24px) clamp(14px, 2.6vw, 26px);
-  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+/* ---- live seed lab: type → SHA-256 → deterministic chaos ---- */
+.labIn {
+  width: 100%; margin: 0 0 16px; background: var(--field); color: var(--txt);
+  border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px;
+  font-size: clamp(16px, 2vw, 19px); font-family: ui-monospace, Menlo, Consolas, monospace;
 }
-.ticketdemo code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px; }
-.tin { background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; direction: ltr; }
-.tarrow { color: var(--mut); font-size: 12px; }
-.tout { color: var(--acc); font-size: 16px; font-weight: 700; direction: ltr; }
-.cover p { color: var(--mut); line-height: 1.7; margin: 0 0 22px; max-width: 62ch; }
-.coverNums { display: flex; border-block: 1px solid var(--line); }
+.labIn:focus { outline: none; border-color: var(--acc); }
+.labOut {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(18px, 2.6vw, 26px); display: flex; flex-direction: column; gap: 12px; min-width: 0;
+}
+.labTag { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 700; letter-spacing: .22em; color: var(--acc); }
+.labTxt { margin: 0; font-size: clamp(17px, 2vw, 22px); line-height: 1.7; overflow-wrap: anywhere; min-height: calc(1.7em * 4); }
+.labRow {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  border-top: 1px solid var(--line); padding-top: 12px;
+  font-size: 12px; color: var(--mut);
+}
+.labRow code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; color: var(--acc); direction: ltr; }
+/* ---- coverage: full-bleed wash band, giant numerals ---- */
+.cover {
+  width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
+  background: var(--card); border-block: 1px solid var(--line);
+  padding-inline-start: max(clamp(20px, 6vw, 96px), env(safe-area-inset-left));
+  padding-inline-end: max(clamp(20px, 6vw, 96px), env(safe-area-inset-right));
+}
+.cover p { color: var(--mut); line-height: 1.7; margin: 0 0 clamp(18px, 3vw, 26px); max-width: 62ch; }
+.coverNums { display: flex; }
 .coverNums div { flex: 1; padding: clamp(16px, 2.6vw, 26px) clamp(10px, 2vw, 22px); display: flex; flex-direction: column; gap: 4px; }
+.coverNums div:first-child { padding-inline-start: 0; }
 .coverNums div + div { border-inline-start: 1px solid var(--line); }
-.coverNums b { font-size: clamp(28px, 4vw, 44px); font-weight: 800; font-variant-numeric: tabular-nums; }
+.coverNums b { font-size: clamp(34px, 5vw, 60px); font-weight: 800; font-variant-numeric: tabular-nums; }
 .coverNums span { color: var(--mut); font-size: 13px; }
+/* ---- finale: full-bleed accent band, inverted ink ---- */
 .project {
-  border: 0; border-block: 1px solid var(--line); border-radius: 0; background: none;
-  padding: clamp(22px, 3.4vw, 34px) 0;
+  width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
+  border: 0; border-radius: 0; background: var(--acc); color: var(--acc-ink);
+  padding-inline-start: max(clamp(20px, 6vw, 96px), env(safe-area-inset-left));
+  padding-inline-end: max(clamp(20px, 6vw, 96px), env(safe-area-inset-right));
   display: flex; gap: clamp(16px, 3vw, 28px); align-items: center; justify-content: space-between; flex-wrap: wrap;
 }
 .project h2 { margin-top: 0; }
-.project p { color: var(--mut); line-height: 1.7; margin: 0 0 8px; max-width: 60ch; }
+/* chained selector to outrank the generic section-numeral rule on accent bg */
+main > section:not(.hero):not(.marquee).project h2::before { color: var(--acc-ink); opacity: .65; }
+.project p { color: var(--acc-ink); opacity: .85; line-height: 1.7; margin: 0 0 8px; max-width: 60ch; }
+.project .cta { background: var(--acc-ink); color: var(--acc); }
 
 .fbrand { display: flex; align-items: center; gap: 8px; color: var(--txt); }
 footer p { margin: 0; }
 
 @media (hover: none), (pointer: coarse) {
   .cta, .ghost, .iconbtn, #theme, .langmenu button { cursor: pointer; }
+  .steps li:hover, .spec:hover, .usegrid article:hover { transform: none; }
 }
 
 /* ---- desktop (fine pointer): no chaos box — full-hero glyph field behind everything ---- */

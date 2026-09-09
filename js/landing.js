@@ -49,7 +49,8 @@
     document.getElementById('ghBtn').href = GITHUB_URL;
 
     buildMarquee();
-    seedDemo();
+    specimens();
+    lab();
     ticker();
     rain();
     counters();
@@ -86,11 +87,80 @@
     }
   }
 
-  function seedDemo() {
-    try {
-      var h = ChaosEntropy.toHex(ChaosEntropy.sha256(new TextEncoder().encode('asdf jkl; qwerpoi')));
-      document.getElementById('seedDemo').textContent = '→ ' + h.slice(0, 16) + '…';
-    } catch (e) { /* entropy.js missing — leave placeholder */ }
+  // Specimen wall: live samples from twelve writing systems. Pools use only
+  // core-supported scripts (no tofu); one random card refills every 3s.
+  var SPEC_POOLS = {
+    lat: 'AaBbCcDdEeFfGgHhŽžØøÞþŒœ',
+    ara: 'ابتثجحخدرزسشصضطظعغفقكلمنهوي',
+    heb: 'אבגדהוזחטיכלמנסעפצקרשת',
+    cyr: 'АбВгДжЖзИйКлМнОпРстУфХцЧшЩэЮя',
+    ell: 'ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσΤτΥυΦφΧχΨψΩω',
+    arm: 'ԱաԲբԳգԴդԵեԶզԷէԹթԺժԻիԼլԽխԾծԿկՀհՁձՂղՃճՄմՅյՆնՇշՈոՉչՊպՋջՌռՍսՎվՏտՐրՑցՓփՔքՕօՖֆ',
+    geo: 'აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ',
+    dev: 'अआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह',
+    tha: 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ',
+    kor: '가나다라마바사아자차카타파하각간갇갈감갑값갓강같',
+    han: '文語字漢字学国語読書東南西北',
+    hir: 'あいうえおかきくけこさしすせそたちつてとなにぬねの'
+  };
+  function cryptoRnd() {
+    var c = null;
+    try { c = (typeof crypto !== 'undefined' && crypto.getRandomValues) ? crypto : null; } catch (e) {}
+    if (!c) return Math.random;
+    var a = new Uint32Array(8), i = 8;
+    return function () {
+      if (i >= 8) { try { c.getRandomValues(a); } catch (e) { return Math.random(); } i = 0; }
+      return a[i++] / 4294967296;
+    };
+  }
+  function drawFrom(pool, n, rnd) {
+    var chars = Array.from(pool), out = '';
+    for (var i = 0; i < n; i++) out += chars[(rnd() * chars.length) | 0];
+    return out;
+  }
+  function specimens() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('#specgrid [data-pool]'));
+    if (!els.length) return;
+    var rnd = cryptoRnd();
+    function fill(el) {
+      var pool = SPEC_POOLS[el.getAttribute('data-pool')];
+      if (pool) el.textContent = drawFrom(pool, 42, rnd);
+    }
+    els.forEach(fill);
+    var reduce = false;
+    try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    if (reduce) return;
+    setInterval(function () {
+      if (document.hidden) return;
+      fill(els[(Math.random() * els.length) | 0]);
+    }, 3000);
+  }
+
+  // Live seed lab: typing hashes to a seed (SHA-256) and rebuilds
+  // deterministic chaos through the real Hash-DRBG — same text, same output.
+  var LAB_POOL = 'AaBbZz文語字あいうアイウ한글اعربאבגЖжЯΩΨωԱԲაბგअआঅআกขກຂកខကခဟလဟཀཁᎠᎡ★☾☀♜♞☯∞§¶';
+  function lab() {
+    var input = document.getElementById('labIn');
+    var out = document.getElementById('labTxt');
+    var seedEl = document.getElementById('seedDemo');
+    if (!input || !out) return;
+    function render() {
+      var hex = '';
+      try {
+        hex = ChaosEntropy.toHex(ChaosEntropy.sha256(new TextEncoder().encode(input.value || '')));
+      } catch (e) { hex = ''; }
+      var stream = null;
+      try { stream = hex && ChaosEntropy.streamFromHex ? ChaosEntropy.streamFromHex(hex) : null; } catch (e) {}
+      var pool = Array.from(LAB_POOL), s = '';
+      for (var i = 0; i < 140; i++) {
+        var r = stream ? stream.nextFloat() : Math.random();
+        s += pool[(r * pool.length) | 0];
+      }
+      out.textContent = s;
+      if (seedEl) seedEl.textContent = '→ ' + (hex ? hex.slice(0, 16) : '…') + '…';
+    }
+    input.addEventListener('input', render);
+    render();
   }
 
   function ticker() {
