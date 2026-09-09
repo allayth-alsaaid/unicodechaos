@@ -12,7 +12,7 @@
   <p>文あア한글 عЖΩשअবกကဟཀᚠᐃⴰꋅ𐌀𓀀𒀭</p>
 </div>
 
-> **Live demo:** coming soon — the URL will be added here.
+> **Live demo:** https://unicodechaos.netlify.app/
 >
 > العربية: [README.ar.md](README.ar.md)
 

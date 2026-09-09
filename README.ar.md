@@ -12,7 +12,7 @@
   <p>文あア한글 عЖΩשअবกကဟཀᚠᐃⴰꋅ𐌀𓀀𒀭</p>
 </div>
 
-> **العرض الحي:** قريباً — سيُضاف الرابط هنا.
+> **العرض الحي:** https://unicodechaos.netlify.app/
 >
 > English: [README.md](README.md)
 
