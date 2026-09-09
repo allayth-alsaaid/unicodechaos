@@ -127,7 +127,7 @@
     ];
     function seedField() {
       P = [];
-      var n = Math.max(140, Math.min(320, Math.round(W * H / 4500)));
+      var n = Math.max(180, Math.min(420, Math.round(W * H / 3000)));
       for (var i = 0; i < n; i++) {
         P.push({
           x: Math.random() * W, y: Math.random() * H,
@@ -146,7 +146,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fs = 17; cols = Math.ceil(W / (fs * 1.15)); drops = [];
       for (var i = 0; i < cols; i++) drops.push(Math.random() * -H / fs);
-      R = fieldMode ? Math.max(110, Math.min(180, Math.min(W, H) * 0.30))
+      R = fieldMode ? Math.max(77, Math.min(126, Math.min(W, H) * 0.21))
                     : Math.max(70, Math.min(150, Math.min(W, H) * 0.30));
       if (fieldMode) seedField();
     }
