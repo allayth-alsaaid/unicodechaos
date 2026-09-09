@@ -196,8 +196,9 @@
   // Glyph rain: one canvas, transform-only motion. Runs only in the first
   // scene (pauses once scrolled down, resumes on return — never dies),
   // static under reduced motion. Desktop pointers get a soft empty circle
-  // around the cursor (cloud parting); hold left for slow drift, hold right
-  // for a downpour — both switch the umbrella off. Touch keeps plain rain.
+  // around the cursor (cloud parting); hold left for slow drift,
+  // double-click-hold left for a fast downpour — both switch the umbrella
+  // off. Touch keeps plain rain.
   function rain() {
     var cv = document.getElementById('chaos');
     if (!cv) return;
@@ -209,9 +210,12 @@
     try { fineHover = matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) {}
     var W, H, cols, drops, fs, R;
     var mx = 0, my = 0, mouseIn = false;
-    // Hold modes (field mode only): left button held = slow drift, right
-    // button held = downpour. Both switch the cursor umbrella off.
-    var slowmo = false, storm = false, stormT = 0;
+    // Hold modes (field mode only, left button): a plain press-and-hold
+    // slows the drift; a quick click followed by a held second press
+    // (double-click hold) unleashes a fast downpour. Both switch the
+    // cursor umbrella off. Right-click stays fully native.
+    var slowmo = false, storm = false, lastUpT = 0;
+    var DBL_MS = 450; // max gap between click and held press for storm
     // Desktop: particle field with depth layers (pseudo-3D) pushed aside by
     // the cursor — glyphs never fade. Touch: classic column rain in the box.
     var fieldMode = fineHover && !reduce;
@@ -239,8 +243,8 @@
       { size: 23, alpha: 0.50, fall: 0.75, repel: 1.35, sway: 15 }
     ];
     // Motion feel: base drift slightly livelier than before, slow-mo crawls,
-    // storm rushes downward. No fading, no density change — speed only.
-    var BASE_SPD = 1.12, SLOW_SPD = 0.22, STORM_FALL = 2.4, STORM_SWAY = 1.2;
+    // storm rushes downward hard. No fading, no density change — speed only.
+    var BASE_SPD = 1.12, SLOW_SPD = 0.22, STORM_FALL = 6.5, STORM_SWAY = 1.5;
     function targetCount(w, h) { return Math.max(180, Math.min(420, Math.round(w * h / 3000))); }
     function newParticle() {
       return {
@@ -298,21 +302,23 @@
       });
       hero.addEventListener('mouseleave', function () { mouseIn = false; });
       hero.addEventListener('mousedown', function (e) {
-        if (e.button === 0) { slowmo = true; hero.classList.add('hold-slow'); }
-        else if (e.button === 2) { storm = true; stormT = Date.now(); hero.classList.add('hold-fast'); }
+        if (e.button !== 0) return;
+        if (Date.now() - lastUpT < DBL_MS) {
+          storm = true; hero.classList.add('hold-fast');
+          e.preventDefault(); // double-press: no word-select under the hold
+        } else {
+          slowmo = true; hero.classList.add('hold-slow');
+        }
       });
       window.addEventListener('mouseup', function (e) {
-        if (e.button === 0) { slowmo = false; hero.classList.remove('hold-slow'); }
-        else if (e.button === 2) { storm = false; hero.classList.remove('hold-fast'); }
-      });
-      window.addEventListener('blur', function () {
+        if (e.button !== 0) return;
+        if (slowmo || storm) lastUpT = Date.now();
         slowmo = false; storm = false;
         hero.classList.remove('hold-slow'); hero.classList.remove('hold-fast');
       });
-      hero.addEventListener('contextmenu', function (e) {
-        // A quick right-click keeps the native menu; only a real hold
-        // (storm mode engaged) suppresses it so the downpour stays clean.
-        if (storm && Date.now() - stormT > 250) e.preventDefault();
+      window.addEventListener('blur', function () {
+        slowmo = false; storm = false; lastUpT = 0;
+        hero.classList.remove('hold-slow'); hero.classList.remove('hold-fast');
       });
     }
     // One continuous field behind nav + hero: pull the hero under the bar
