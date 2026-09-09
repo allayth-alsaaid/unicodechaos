@@ -196,7 +196,8 @@
   // Glyph rain: one canvas, transform-only motion. Runs only in the first
   // scene (pauses once scrolled down, resumes on return — never dies),
   // static under reduced motion. Desktop pointers get a soft empty circle
-  // around the cursor (cloud parting); touch devices keep the plain rain.
+  // around the cursor (cloud parting); hold left for slow drift, hold right
+  // for a downpour — both switch the umbrella off. Touch keeps plain rain.
   function rain() {
     var cv = document.getElementById('chaos');
     if (!cv) return;
@@ -208,6 +209,9 @@
     try { fineHover = matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) {}
     var W, H, cols, drops, fs, R;
     var mx = 0, my = 0, mouseIn = false;
+    // Hold modes (field mode only): left button held = slow drift, right
+    // button held = downpour. Both switch the cursor umbrella off.
+    var slowmo = false, storm = false, stormT = 0;
     // Desktop: particle field with depth layers (pseudo-3D) pushed aside by
     // the cursor — glyphs never fade. Touch: classic column rain in the box.
     var fieldMode = fineHover && !reduce;
@@ -234,6 +238,9 @@
       { size: 17, alpha: 0.34, fall: 0.48, repel: 0.85, sway: 9 },
       { size: 23, alpha: 0.50, fall: 0.75, repel: 1.35, sway: 15 }
     ];
+    // Motion feel: base drift slightly livelier than before, slow-mo crawls,
+    // storm rushes downward. No fading, no density change — speed only.
+    var BASE_SPD = 1.12, SLOW_SPD = 0.22, STORM_FALL = 2.4, STORM_SWAY = 1.2;
     function targetCount(w, h) { return Math.max(180, Math.min(420, Math.round(w * h / 3000))); }
     function newParticle() {
       return {
@@ -290,6 +297,23 @@
         mx = e.clientX - r.left; my = e.clientY - r.top; mouseIn = true;
       });
       hero.addEventListener('mouseleave', function () { mouseIn = false; });
+      hero.addEventListener('mousedown', function (e) {
+        if (e.button === 0) { slowmo = true; hero.classList.add('hold-slow'); }
+        else if (e.button === 2) { storm = true; stormT = Date.now(); hero.classList.add('hold-fast'); }
+      });
+      window.addEventListener('mouseup', function (e) {
+        if (e.button === 0) { slowmo = false; hero.classList.remove('hold-slow'); }
+        else if (e.button === 2) { storm = false; hero.classList.remove('hold-fast'); }
+      });
+      window.addEventListener('blur', function () {
+        slowmo = false; storm = false;
+        hero.classList.remove('hold-slow'); hero.classList.remove('hold-fast');
+      });
+      hero.addEventListener('contextmenu', function (e) {
+        // A quick right-click keeps the native menu; only a real hold
+        // (storm mode engaged) suppresses it so the downpour stays clean.
+        if (storm && Date.now() - stormT > 250) e.preventDefault();
+      });
     }
     // One continuous field behind nav + hero: pull the hero under the bar
     // (measured, never hardcoded) so glyphs reach the exact viewport top.
@@ -347,7 +371,10 @@
       } else if (P.length > targetN + 20) {
         P.length = targetN;
       }
-      var useMouse = fineHover && mouseIn;
+      var useMouse = fineHover && mouseIn && !slowmo && !storm;
+      var slowOn = !storm && slowmo; // storm wins if both buttons held
+      var fallMul = BASE_SPD * (storm ? STORM_FALL : (slowOn ? SLOW_SPD : 1));
+      var swayMul = BASE_SPD * (storm ? STORM_SWAY : (slowOn ? SLOW_SPD : 1));
       for (var i = 0; i < P.length; i++) {
         var p = P[i], L = LAYERS[p.layer];
         if (useMouse) {
@@ -360,8 +387,8 @@
           }
         }
         p.vx *= 0.90; p.vy *= 0.90;
-        p.x += p.vx + Math.sin(ft * 0.02 * p.sp + p.ph) * L.sway * 0.06;
-        p.y += p.vy + L.fall;
+        p.x += p.vx + Math.sin(ft * 0.02 * p.sp + p.ph) * L.sway * 0.06 * swayMul;
+        p.y += p.vy + L.fall * fallMul;
         if (p.y > H + 30) { p.y = -30; p.x = Math.random() * W; p.vx = 0; p.vy = 0; }
         if (p.x < -40) p.x = W + 40; else if (p.x > W + 40) p.x = -40;
         ctx.font = L.size + 'px system-ui, "Segoe UI", sans-serif';

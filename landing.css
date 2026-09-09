@@ -115,6 +115,10 @@ footer {
   min-height: calc(100vh - 64px - 40px);
   min-height: calc(100dvh - 64px - 40px);
 }
+/* hold-mode feedback: cursor tells the speed, text can't select mid-hold */
+.hero.hold-slow, .hero.hold-fast { user-select: none; -webkit-user-select: none; }
+.hero.hold-slow { cursor: crosshair; }
+.hero.hold-fast { cursor: s-resize; }
 .badge {
   display: inline-block; font-size: 12px; font-weight: 800;
   border: 1px solid var(--acc); color: var(--acc); border-radius: 20px; padding: 5px 14px;
