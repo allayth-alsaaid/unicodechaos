@@ -116,6 +116,28 @@
     try { fineHover = matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) {}
     var W, H, cols, drops, fs, R;
     var mx = 0, my = 0, mouseIn = false;
+    // Desktop: particle field with depth layers (pseudo-3D) pushed aside by
+    // the cursor — glyphs never fade. Touch: classic column rain in the box.
+    var fieldMode = fineHover && !reduce;
+    var P = [], ft = 0;
+    var LAYERS = [
+      { size: 13, alpha: 0.20, fall: 0.28, repel: 0.45, sway: 4 },
+      { size: 17, alpha: 0.34, fall: 0.48, repel: 0.85, sway: 9 },
+      { size: 23, alpha: 0.50, fall: 0.75, repel: 1.35, sway: 15 }
+    ];
+    function seedField() {
+      P = [];
+      var n = Math.max(140, Math.min(320, Math.round(W * H / 4500)));
+      for (var i = 0; i < n; i++) {
+        P.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: 0, vy: 0, layer: (Math.random() * 3) | 0,
+          g: glyphs[(Math.random() * glyphs.length) | 0],
+          ph: Math.random() * Math.PI * 2, sp: 0.5 + Math.random() * 0.8,
+          accent: Math.random() < 0.12
+        });
+      }
+    }
     function size() {
       var r = cv.parentElement.getBoundingClientRect();
       var dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -124,18 +146,20 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fs = 17; cols = Math.ceil(W / (fs * 1.15)); drops = [];
       for (var i = 0; i < cols; i++) drops.push(Math.random() * -H / fs);
-      R = Math.max(70, Math.min(150, Math.min(W, H) * 0.30));
+      R = fieldMode ? Math.max(110, Math.min(180, Math.min(W, H) * 0.30))
+                    : Math.max(70, Math.min(150, Math.min(W, H) * 0.30));
+      if (fieldMode) seedField();
     }
     size();
     var panel = cv.parentElement;
+    var hero = (panel && panel.closest) ? (panel.closest('.hero') || cv) : cv;
     if (fineHover && !reduce) {
-      panel.addEventListener('mousemove', function (e) {
+      hero.addEventListener('mousemove', function (e) {
         var r = cv.getBoundingClientRect();
         mx = e.clientX - r.left; my = e.clientY - r.top; mouseIn = true;
       });
-      panel.addEventListener('mouseleave', function () { mouseIn = false; });
+      hero.addEventListener('mouseleave', function () { mouseIn = false; });
     }
-    var hero = (panel && panel.closest) ? (panel.closest('.hero') || cv) : cv;
     var ioVisible = true, nearTop = true, visible = true, running = false;
     function kick() {
       if (visible && !reduce && !running) { running = true; requestAnimationFrame(frame); }
@@ -158,8 +182,37 @@
         refresh();
       }).observe(hero);
     } catch (e) { ioVisible = true; /* always visible */ }
+    function fieldFrame() {
+      ft++;
+      var bgc = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#101210';
+      ctx.fillStyle = bgc;
+      ctx.fillRect(0, 0, W, H);
+      var useMouse = fineHover && mouseIn;
+      for (var i = 0; i < P.length; i++) {
+        var p = P[i], L = LAYERS[p.layer];
+        if (useMouse) {
+          var ox = p.x - mx, oy = p.y - my;
+          var d = Math.sqrt(ox * ox + oy * oy);
+          var Rr = R * (0.75 + 0.3 * p.layer);
+          if (d < Rr && d > 0.5) {
+            var f = 1 - d / Rr; f *= f; f *= 3.4 * L.repel;
+            p.vx += (ox / d) * f; p.vy += (oy / d) * f;
+          }
+        }
+        p.vx *= 0.90; p.vy *= 0.90;
+        p.x += p.vx + Math.sin(ft * 0.02 * p.sp + p.ph) * L.sway * 0.06;
+        p.y += p.vy + L.fall;
+        if (p.y > H + 30) { p.y = -30; p.x = Math.random() * W; p.vx = 0; p.vy = 0; }
+        if (p.x < -40) p.x = W + 40; else if (p.x > W + 40) p.x = -40;
+        ctx.font = L.size + 'px system-ui, "Segoe UI", sans-serif';
+        ctx.fillStyle = p.accent ? 'rgba(125,211,192,0.950)' : 'rgba(125,211,192,' + L.alpha.toFixed(3) + ')';
+        ctx.fillText(p.g, p.x, p.y);
+      }
+    }
     function frame() {
       if (!visible || reduce) { running = false; return; } // pausable + restartable
+      if (fieldMode) { fieldFrame(); }
+      else {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--field') || '#121412';
       ctx.fillRect(0, 0, W, H);
       ctx.font = fs + 'px system-ui, "Segoe UI", sans-serif';
@@ -185,6 +238,7 @@
         }
         drops[i] += 0.42;
         if (drops[i] * fs > H && Math.random() > 0.976) drops[i] = 0;
+      }
       }
       requestAnimationFrame(frame);
     }
