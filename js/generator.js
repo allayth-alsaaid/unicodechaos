@@ -9,9 +9,10 @@
   const LIST_KEYS = ['symbols', 'emoji', 'numbers', 'punctuation', 'currency', 'other'];
 
   // Entry weights (expectations, not quotas — every draw stays independent):
-  // core script ≈ 2.5% each (82% together), list-category ≈ 1.2% each,
-  // other script ≈ 0.08% each (~11% together: present, never flooding).
-  const CORE_W = 16, LIST_W = 8, RARE_W = 0.5;
+  // core script ≈ 2.4% each (77% together), list-category ≈ 1.2% each
+  // except emoji ≈ 6% (the only color — ~3 per visual line on average),
+  // other script ≈ 0.08% each (~10% together: present, never flooding).
+  const CORE_W = 16, LIST_W = 8, EMOJI_W = 40, RARE_W = 0.5;
 
   // One entry per script plus one per list-category.
   // User selection filters the pool; an explicitly-emptied pool falls back
@@ -33,13 +34,13 @@
       if (k === 'emoji' && !emojiOn) continue;
       if (!catsOn(k)) continue;
       if (!lists[k] || !lists[k].length) continue;
-      pool.push({ kind: 'list', key: k, w: LIST_W });
+      pool.push({ kind: 'list', key: k, w: k === 'emoji' ? EMOJI_W : LIST_W });
     }
     if (!pool.length) {
       for (const s of data.scripts) pool.push({ kind: 'script', script: s, w: s.core ? CORE_W : RARE_W });
       for (const k of LIST_KEYS) {
         if (k === 'emoji' && !emojiOn) continue;
-        if (lists[k] && lists[k].length) pool.push({ kind: 'list', key: k, w: LIST_W });
+        if (lists[k] && lists[k].length) pool.push({ kind: 'list', key: k, w: k === 'emoji' ? EMOJI_W : LIST_W });
       }
     }
     return pool;

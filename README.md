@@ -18,7 +18,7 @@
 
 ## What this is
 
-Unicode Chaos builds text for **pure randomness, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a tiered random engine: familiar scripts first (≈2.5% each), list-categories in the middle (≈1.2% each), rare scripts still present (≈0.08% each) — every draw independent.
+Unicode Chaos builds text for **pure randomness, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a tiered random engine: familiar scripts first (≈2.4% each), list-categories in the middle (≈1.2% each, emoji boosted to ≈6% as the only color), rare scripts still present (≈0.08% each) — every draw independent.
 
 It is **not readable on purpose**. It is a stress-test, a toy, and an entropy playground.
 
@@ -264,7 +264,7 @@ Measured with the Node harness (no browser needed), not claimed on faith:
 
 | Check | Result |
 |---|---|
-| Tiered draw, length 17600 | core 81% · lists 7% · obscure 11% · emoji ≈ 1.3% · 176/176 entries appear |
+| Tiered draw, length 17600 | core 78% · lists 12% (emoji ≈ 6%) · obscure 10% · 176/176 entries appear |
 | Per-script isolation (single-enable + scripts-only) | 100% pure, correct labels |
 | Per-category isolate (emoji-only) | pure |
 | Empty selection | falls back to all, never breaks |
