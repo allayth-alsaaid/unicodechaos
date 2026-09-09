@@ -90,24 +90,9 @@
       data = await ChaosUnicode.loadAll();
     }
 
-    const lenInput = $('len'), chaos = $('chaos'), chaosVal = $('chaosVal'),
-      levelName = $('levelName'), out = $('output'), stats = $('stats'),
+    const lenInput = $('len'), out = $('output'), stats = $('stats'),
       seedEl = $('seed'), genBtn = $('generate');
 
-    function levelKey(v) { return v <= 25 ? 'low' : v <= 50 ? 'medium' : v <= 80 ? 'high' : 'maximum'; }
-    function refreshChaosLabel() {
-      const v = +chaos.value;
-      chaosVal.textContent = v + '%';
-      const key = levelKey(v);
-      levelName.textContent = T(key);
-      levelName.dataset.level = key;
-    }
-    chaos.addEventListener('input', refreshChaosLabel);
-    refreshChaosLabel();
-
-    document.querySelectorAll('.scale .tick').forEach(t => {
-      t.addEventListener('click', () => { chaos.value = t.dataset.value; refreshChaosLabel(); });
-    });
     document.querySelectorAll('[data-preset]').forEach(b => {
       b.addEventListener('click', () => {
         lenInput.value = b.dataset.preset;
@@ -282,7 +267,7 @@
       const graphemes = (typeof Intl !== 'undefined' && Intl.Segmenter)
         ? [...new Intl.Segmenter().segment(lastResult.text)].length
         : lastResult.units.length;
-      stats.textContent = T('stats', { g: graphemes, s: scriptsUsed, ms: lastMs, level: T(lastResult.weights.name) });
+      stats.textContent = T('stats', { g: graphemes, s: scriptsUsed, ms: lastMs });
     }
 
     // ---- Seed: random by default on every Generate; small Edit for manual text ----
@@ -333,7 +318,6 @@
     });
 
     applyLangRefresh = () => {
-      refreshChaosLabel();
       buildLists();
       refreshCounts();
       setEmoji(sel.emoji);
@@ -348,7 +332,6 @@
         const t0 = performance.now();
         const result = ChaosGenerator.generate(data, {
           length: +lenInput.value || 2000,
-          chaos: +chaos.value,
           restoreSeed: customSeedHex() || restoreSeed || undefined,
           ...selectionOpts()
         });
@@ -375,7 +358,7 @@
     $('share').addEventListener('click', async () => {
       const full = seedEl.dataset.full;
       if (!full) return;
-      const url = location.origin + location.pathname + '?seed=' + full + '&len=' + (+lenInput.value || 2000) + '&chaos=' + (+chaos.value) + '&lang=' + document.documentElement.lang;
+      const url = location.origin + location.pathname + '?seed=' + full + '&len=' + (+lenInput.value || 2000) + '&lang=' + document.documentElement.lang;
       try { await navigator.clipboard.writeText(url); flash('share', T('linkCopied')); }
       catch (e) {
         const ta = document.createElement('textarea');
@@ -414,7 +397,6 @@
       try {
         const p = new URLSearchParams(location.search);
         if (p.get('len')) lenInput.value = Math.max(1, Math.min(100000, +p.get('len') || 2000));
-        if (p.get('chaos')) { chaos.value = Math.max(0, Math.min(100, +p.get('chaos') || 100)); refreshChaosLabel(); }
       } catch (e) { /* ignore */ }
       doGenerate(shared);
     } else {

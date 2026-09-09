@@ -181,7 +181,7 @@ section { padding: 56px 0; }
 footer p { margin: 0; }
 
 @media (hover: none), (pointer: coarse) {
-  .cta, .ghost, .iconbtn, #theme, .langmenu button, .scale .tick { cursor: pointer; }
+  .cta, .ghost, .iconbtn, #theme, .langmenu button { cursor: pointer; }
 }
 
 @media (max-width: 860px) {

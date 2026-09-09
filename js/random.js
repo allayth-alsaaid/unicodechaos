@@ -40,15 +40,6 @@
     if (!arr || arr.length === 0) return undefined;
     return arr[int(0, arr.length - 1)];
   }
-  // Weighted pick: entries [{key, weight}]
-  function weightedPick(entries) {
-    let total = 0;
-    for (const e of entries) total += Math.max(0, e.weight);
-    if (total <= 0) return pick(entries);
-    let r = float() * total;
-    for (const e of entries) { r -= Math.max(0, e.weight); if (r <= 0) return e; }
-    return entries[entries.length - 1];
-  }
 
-  global.ChaosRandom = { float, int, pick, weightedPick, setSeed, clearSeed, useEntropyStream, clearEntropyStream, store };
+  global.ChaosRandom = { float, int, pick, setSeed, clearSeed, useEntropyStream, clearEntropyStream, store };
 })(typeof window !== 'undefined' ? window : globalThis);

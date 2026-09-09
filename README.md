@@ -1,7 +1,7 @@
 <div align="center">
   <img src="favicon.svg" width="96" height="96" alt="Unicode Chaos mark — a U dissolving into chaos" />
   <h1>Unicode Chaos</h1>
-  <p><b>Every script on Earth in one text.</b> A maximum-diversity text generator mixing 170 writing systems, symbols, numerals and emoji — with reproducible seeds and zero backend.</p>
+  <p><b>Every script on Earth in one text.</b> A pure-random text generator mixing 170 writing systems, symbols, numerals and emoji — with reproducible seeds and zero backend.</p>
   <p>
     <img src="https://img.shields.io/badge/Unicode-16.0-0f766e" alt="Unicode 16.0" />
     <img src="https://img.shields.io/badge/scripts-170-0f766e" alt="170 scripts" />
@@ -18,7 +18,7 @@
 
 ## What this is
 
-Unicode Chaos builds text for **maximum variety, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a weighted random engine with hard anti-repeat guarantees.
+Unicode Chaos builds text for **pure randomness, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a uniform random engine: every category, script and character equally likely, every draw independent.
 
 It is **not readable on purpose**. It is a stress-test, a toy, and an entropy playground.
 
@@ -49,15 +49,15 @@ OS randomness (256-bit) + jitter + microsecond stamp + counter
    seed (64 hex chars)
         │  Hash-DRBG: SHA-256(seed ‖ n), ratcheted per block
         ▼
-Category → Script/Block → Character   (weighted + anti-repeat + rare-boost)
+Category → Script/Block → Character   (uniform at every stage)
         │
         ▼
   visible text (length counted in graphemes — emoji counts as 1)
 ```
 
-- **Three-stage draw:** category weights per chaos level, then a script picked by range size × rarity boost × anti-repeat penalty, then a uniform code point from that script's ranges.
+- **Three-stage draw:** a uniform category, then a uniform script, then a uniform code point from that script's ranges. No weights, no boosts, no anti-repeat rules — proportions follow chance, not a plan.
 - **Never emitted:** combining marks and invisible/control code points (they corrupt counting and rendering).
-- **Never repeats:** the same script twice in a row (all levels), the same character within the last two units, the same category three times running — unless you deliberately isolate a single script/category, in which case physics wins and the rule steps aside.
+- **Repeats allowed:** true randomness clumps — the same script or character may appear back-to-back. Only marks/invisibles are filtered, for correctness, never for distribution.
 - **Backtracking-resistant stream:** the working key ratchets forward every block, so a leaked live state cannot reveal earlier outputs — while replaying from the published seed still reproduces everything.
 
 ## Coverage
@@ -264,11 +264,11 @@ Measured with the Node harness (no browser needed), not claimed on faith:
 
 | Check | Result |
 |---|---|
-| Full diversity, Maximum, length 5000 | **176 / 176** distinct scripts/categories |
-| Per-script isolation (110 scripts × single-enable) | 100% pure, correct labels |
-| Per-script disable (110 scripts) | 0 leaks |
-| Per-category isolate / disable (6 categories) | pure / 0 leaks |
-| Emoji off, 2000 units × 4 chaos levels | **0 leaks** (checked with the engine's own filter) |
+| Uniform draw, length 7000 | 7/7 categories ≈ 14.3% each · 170/170 scripts reached |
+| Per-script isolation (single-enable + scripts-only) | 100% pure, correct labels |
+| Per-category isolate (emoji-only) | pure |
+| Empty selection | falls back to all, never breaks |
+| Emoji off, length 2000 | **0 leaks** (checked with the engine's own filter) |
 | Same seed twice | byte-identical output |
 | Two fresh generations | different output |
 
@@ -281,10 +281,8 @@ landing.css         landing styles (same teal tokens)
 style.css           generator theme (dark/light via data-theme)
 data/               Unicode tables: scripts, symbols, emoji, numbers…
 js/entropy.js       sync SHA-256 + Hash-DRBG + jitter collector
-js/generator.js     Category → Script → Character engine
-js/diversity.js     anti-repeat rules + rare-script boost
+js/generator.js     Category → Script → Character engine (uniform random)
 js/unicode.js       data loading + filters (marks, invisibles, emoji-off)
-js/weights.js       category weights per chaos level
 js/app.js           generator UI (selection, seeds, share links, i18n)
 js/site.js          shared theme + EN/AR dictionary + RTL
 js/landing.js       landing motion (glyph rain, marquee, counters)

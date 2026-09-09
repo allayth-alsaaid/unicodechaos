@@ -87,7 +87,7 @@ h1 { margin: 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: .5px; font-we
 .output:empty::before { content: "Press Generate…"; color: var(--mut); }
 html[lang="ar"] .output:empty::before { content: "اضغط ولّد…"; }
 /* RTL correctness: no letter-spacing on Arabic, mirror the switch knob */
-[dir="rtl"] .big, [dir="rtl"] .badge, [dir="rtl"] .seedlabel { letter-spacing: 0; }
+[dir="rtl"] .big, [dir="rtl"] .seedlabel { letter-spacing: 0; }
 [dir="rtl"] .switch::after { left: auto; right: 2px; }
 [dir="rtl"] .switch:checked::after { left: auto; right: 22px; }
 .sub { color: var(--mut); font-size: 13.5px; margin: 6px 0 0; max-width: 60ch; line-height: 1.5; }
@@ -126,15 +126,6 @@ html[lang="ar"] .output:empty::before { content: "اضغط ولّد…"; }
 #clear.ghost { opacity: .65; }
 #clear.ghost:hover { opacity: 1; }
 #share { white-space: nowrap; }
-#chaos { flex: 1; min-width: 160px; accent-color: var(--acc); cursor: pointer; height: 28px; }
-#chaosVal { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 52px; text-align: right; }
-.badge {
-  border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 800;
-  background: var(--acc); color: var(--acc-ink); letter-spacing: .4px;
-}
-.scale { display: flex; justify-content: space-between; color: var(--mut); font-size: 12px; margin-top: 6px; }
-.scale .tick { cursor: pointer; padding: 3px 8px; border-radius: 6px; transition: background .15s, color .15s; }
-.scale .tick:hover { color: var(--txt); background: var(--acc-soft); }
 .big {
   width: 100%; margin-top: 22px; padding: 15px; font-size: 17px; font-weight: 800;
   letter-spacing: 1.5px; border: 0; border-radius: 12px; cursor: pointer;
@@ -296,8 +287,6 @@ body.noscroll { overflow: hidden; }
   #seedHash { display: none; }
 }
 @media (max-width: 420px) {
-  #chaos { flex-basis: 100%; width: 100%; }
-  .scale { flex-wrap: wrap; row-gap: 4px; }
   .seedrow { gap: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
