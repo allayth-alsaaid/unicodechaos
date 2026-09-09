@@ -101,45 +101,95 @@
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(tick, 2500);
   }
 
-  // Glyph rain: one canvas, transform-only motion, pauses offscreen, static under reduced motion.
+  // Glyph rain: one canvas, transform-only motion. Runs only in the first
+  // scene (pauses once scrolled down, resumes on return — never dies),
+  // static under reduced motion. Desktop pointers get a soft empty circle
+  // around the cursor (cloud parting); touch devices keep the plain rain.
   function rain() {
     var cv = document.getElementById('chaos');
     if (!cv) return;
     var ctx = cv.getContext('2d');
-    var glyphs = '文あア한عЖΩשअবกကဟཀᚠᐃⴰꋅꚠ𐌀AaΒáçñØ文語字あいう한글عربЖжΩΩPriya'.split('');
+    // Core-supported scripts only (no tofu boxes in the hero).
+    var glyphs = Array.from('AaBbZz文語字あいうアイウ한글اعربאבגЖжЯΩΨωԱԲაბგअआঅআกขກຂកខကခဟလဟཀཁᎠᎡ');
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var W, H, cols, drops, fs;
+    var fineHover = false;
+    try { fineHover = matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) {}
+    var W, H, cols, drops, fs, R;
+    var mx = 0, my = 0, mouseIn = false;
     function size() {
       var r = cv.parentElement.getBoundingClientRect();
       var dpr = Math.min(2, window.devicePixelRatio || 1);
       W = Math.max(50, r.width); H = Math.max(50, r.height);
-      cv.width = W * dpr; cv.height = H * dpr;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fs = 17; cols = Math.ceil(W / (fs * 1.15)); drops = [];
       for (var i = 0; i < cols; i++) drops.push(Math.random() * -H / fs);
+      R = Math.max(70, Math.min(150, Math.min(W, H) * 0.30));
     }
     size();
-    window.addEventListener('resize', size);
-    var visible = true;
+    var panel = cv.parentElement;
+    if (fineHover && !reduce) {
+      panel.addEventListener('mousemove', function (e) {
+        var r = cv.getBoundingClientRect();
+        mx = e.clientX - r.left; my = e.clientY - r.top; mouseIn = true;
+      });
+      panel.addEventListener('mouseleave', function () { mouseIn = false; });
+    }
+    var hero = (panel && panel.closest) ? (panel.closest('.hero') || cv) : cv;
+    var ioVisible = true, nearTop = true, visible = true, running = false;
+    function kick() {
+      if (visible && !reduce && !running) { running = true; requestAnimationFrame(frame); }
+    }
+    function refresh() {
+      visible = ioVisible && nearTop;
+      kick();
+    }
+    function onScroll() {
+      nearTop = (window.scrollY || window.pageYOffset || 0) < window.innerHeight * 0.22;
+      refresh();
+    }
+    window.addEventListener('resize', function () { size(); onScroll(); });
+    try { window.addEventListener('scroll', onScroll, { passive: true }); }
+    catch (e) { window.addEventListener('scroll', onScroll); }
     try {
-      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }).observe(cv);
-    } catch (e) { /* always visible */ }
+      ioVisible = false; // let the observer decide (fires immediately)
+      new IntersectionObserver(function (es) {
+        ioVisible = !!(es[0] && es[0].isIntersecting);
+        refresh();
+      }).observe(hero);
+    } catch (e) { ioVisible = true; /* always visible */ }
     function frame() {
+      if (!visible || reduce) { running = false; return; } // pausable + restartable
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--field') || '#121412';
       ctx.fillRect(0, 0, W, H);
       ctx.font = fs + 'px system-ui, "Segoe UI", sans-serif';
+      var useMouse = fineHover && mouseIn;
       for (var i = 0; i < cols; i++) {
-        var g = glyphs[(Math.random() * glyphs.length) | 0];
-        var head = (i * 37 + ((drops[i] * 13) | 0)) % 5 === 0;
-        ctx.fillStyle = head ? 'rgba(125,211,192,.95)' : 'rgba(125,211,192,.34)';
-        ctx.fillText(g, i * fs * 1.15, drops[i] * fs);
+        var x = i * fs * 1.15, y = drops[i] * fs;
+        var dx = 0, a = 1;
+        if (useMouse) {
+          var ox = x - mx, oy = y - my;
+          var d = Math.sqrt(ox * ox + oy * oy);
+          if (d < R) {
+            var t = d / R;
+            a = t * t * (3 - 2 * t); // smooth hole edge
+            if (d > 0.5) dx = (ox / d) * (1 - t) * 22; // columns part aside
+          }
+        }
+        if (a > 0.02) {
+          var g = glyphs[(Math.random() * glyphs.length) | 0];
+          var head = (i * 37 + ((drops[i] * 13) | 0)) % 5 === 0;
+          ctx.fillStyle = head ? 'rgba(125,211,192,' + (0.95 * a).toFixed(3) + ')'
+                               : 'rgba(125,211,192,' + (0.34 * a).toFixed(3) + ')';
+          ctx.fillText(g, x + dx, y);
+        }
         drops[i] += 0.42;
         if (drops[i] * fs > H && Math.random() > 0.976) drops[i] = 0;
       }
-      if (visible && !reduce) requestAnimationFrame(frame);
+      requestAnimationFrame(frame);
     }
     if (reduce) frameOnce();
-    else requestAnimationFrame(frame);
+    else { onScroll(); refresh(); }
     function frameOnce() {
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--field') || '#121412';
       ctx.fillRect(0, 0, W, H);
