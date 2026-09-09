@@ -24,9 +24,11 @@ try {
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<main class="card">
-  <header class="top gen-top">
-    <a class="brandmark" href="index.html" data-keeplang data-i18n-aria="home" aria-label="Back to start"><img class="logo-for-dark" src="favicon.svg" alt="Unicode Chaos" width="46" height="46" /><img class="logo-for-light" src="favicon-dark.svg" alt="" width="46" height="46" /></a>
+<canvas id="genbg" aria-hidden="true"></canvas>
+
+<main class="console">
+  <header class="chead">
+    <a class="brandmark" href="index.html" data-keeplang data-i18n-aria="home" aria-label="Back to start"><img class="logo-for-dark" src="favicon.svg" alt="Unicode Chaos" width="46" height="46" /><img class="logo-for-light" src="favicon-dark.svg" alt="" width="46" height="46" /><span class="wordmark" aria-hidden="true">Unicode Chaos</span></a>
     <div class="top-actions">
       <button id="advBtn" class="iconbtn" type="button" data-i18n-aria="advanced" aria-label="Advanced settings" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" aria-hidden="true"><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></g><g fill="var(--card)" stroke="currentColor" stroke-width="1.8"><circle cx="9.5" cy="7" r="2.4"/><circle cx="15" cy="12" r="2.4"/><circle cx="8" cy="17" r="2.4"/></g></svg>
@@ -48,51 +50,59 @@ try {
     </div>
   </header>
 
-  <section class="panel">
-    <label class="row-label" for="len"><span data-i18n="length">Length</span> <span class="hint" data-i18n="lenHint">visible units · emoji = 1</span></label>
-    <div class="row">
-      <input id="len" type="number" value="2000" min="1" max="100000" />
-      <div class="presets">
-        <button data-preset="10">10</button>
-        <button data-preset="100">100</button>
-        <button data-preset="1000">1K</button>
-        <button data-preset="2000">2K</button>
-        <button data-preset="10000">10K</button>
+  <div class="deck">
+    <section class="panel ctl">
+      <p class="eyebrow"><span data-i18n="ctlTitle">Configure</span></p>
+      <label class="row-label" for="len"><span data-i18n="length">Length</span> <span class="hint" data-i18n="lenHint">visible units · emoji = 1</span></label>
+      <div class="row lenrow">
+        <input id="len" type="number" value="2000" min="1" max="100000" />
+        <div class="presets">
+          <button data-preset="10">10</button>
+          <button data-preset="100">100</button>
+          <button data-preset="1000">1K</button>
+          <button data-preset="2000">2K</button>
+          <button data-preset="10000">10K</button>
+        </div>
       </div>
-    </div>
-
-    <div class="row switchrow">
-      <input type="checkbox" id="emojiToggle" class="switch" checked />
-      <label for="emojiToggle" class="switchlabel"><span data-i18n="emoji">Emoji</span> <span id="emojiState" class="hint">included</span></label>
-    </div>
-
-    <button id="generate" class="big" data-i18n="generate">Generate</button>
-  </section>
-
-  <section class="panel">
-    <div id="output" class="output" aria-live="polite" title="Click to select all" tabindex="0"></div>
-    <div class="seedrow">
-      <span class="seedlabel" data-i18n="seed">seed</span>
-      <code id="seed">—</code>
-      <button id="share" data-i18n="share">Copy link</button>
-      <button id="seedEdit" class="mini" data-i18n="edit">Edit</button>
-    </div>
-    <div class="seededit" id="seedEditRow" hidden>
-      <input id="customSeed" type="text" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="seedPh" placeholder="Type anything — even keyboard mashing…" maxlength="200" />
-      <button id="seedApply" class="mini" data-i18n="apply">Use</button>
-      <button id="seedRandom" class="mini" data-i18n="random">Random</button>
-      <code id="seedHash">—</code>
-    </div>
-    <p class="hint seedhint" id="seedHint" data-i18n="seedHint" hidden>Latin letters only · same text gives same output</p>
-    <div class="foot">
-      <span id="stats"></span>
-      <div class="actions">
-        <button id="copy" data-i18n="copy">Copy</button>
-        <button id="download">TXT</button>
-        <button id="clear" class="ghost" data-i18n="clear">Clear</button>
+      <hr class="rule" aria-hidden="true" />
+      <div class="row switchrow">
+        <input type="checkbox" id="emojiToggle" class="switch" checked />
+        <label for="emojiToggle" class="switchlabel"><span data-i18n="emoji">Emoji</span> <span id="emojiState" class="hint">included</span></label>
       </div>
-    </div>
-  </section>
+      <button id="generate" class="big" data-i18n="generate">Generate</button>
+    </section>
+
+    <section class="panel stage">
+      <div class="chrome" aria-hidden="true">
+        <span class="cdot"></span><span class="cdot"></span><span class="cdot"></span>
+        <span class="ctitle" data-i18n="outTitle">Output</span>
+      </div>
+      <div id="output" class="output" aria-live="polite" title="Click to select all" tabindex="0"></div>
+      <div class="seedrow ticket">
+        <span class="seedlabel" data-i18n="seed">seed</span>
+        <code id="seed">—</code>
+        <span class="ticketbtns">
+          <button id="share" data-i18n="share">Copy link</button>
+          <button id="seedEdit" class="mini" data-i18n="edit">Edit</button>
+        </span>
+      </div>
+      <div class="seededit" id="seedEditRow" hidden>
+        <input id="customSeed" type="text" dir="ltr" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="seedPh" placeholder="Type anything — even keyboard mashing…" maxlength="200" />
+        <button id="seedApply" class="mini" data-i18n="apply">Use</button>
+        <button id="seedRandom" class="mini" data-i18n="random">Random</button>
+        <code id="seedHash">—</code>
+      </div>
+      <p class="hint seedhint" id="seedHint" data-i18n="seedHint" hidden>Latin letters only · same text gives same output</p>
+      <div class="foot">
+        <span id="stats"></span>
+        <div class="actions">
+          <button id="copy" data-i18n="copy">Copy</button>
+          <button id="download">TXT</button>
+          <button id="clear" class="ghost" data-i18n="clear">Clear</button>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <p class="tiny" data-i18n="tiny">Same link + same seed always reproduces the same text · Enter regenerates</p>
 </main>
@@ -122,5 +132,6 @@ try {
 <script src="js/generator.js"></script>
 <script src="js/site.js"></script>
 <script src="js/app.js"></script>
+<script src="js/genbg.js"></script>
 </body>
 </html>
