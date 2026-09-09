@@ -13,7 +13,7 @@ mkdir -p "$DIST/js" "$DIST/data"
 
 cp "$ROOT/index.html" "$ROOT/generator.html" \
    "$ROOT/landing.css" "$ROOT/style.css" \
-   "$ROOT/favicon.svg" "$ROOT/favicon-32.png" "$ROOT/apple-touch-icon.png" \
+   "$ROOT/favicon.svg" "$ROOT/favicon-dark.svg" "$ROOT/favicon-32.png" "$ROOT/apple-touch-icon.png" \
    "$DIST/"
 cp "$ROOT/js/"*.js "$DIST/js/"
 cp "$ROOT/data/"*.json "$DIST/data/"

@@ -50,6 +50,9 @@ h1 { margin: 0; font-size: clamp(24px, 4vw, 34px); letter-spacing: .5px; font-we
 .gen-top { align-items: center; }
 .brandmark { display: inline-flex; line-height: 0; border-radius: 12px; }
 .brandmark img { width: 46px; height: 46px; display: block; }
+/* theme logos: light mark on dark bg, dark mark on light bg (same design) */
+[data-theme="dark"] .logo-for-light { display: none; }
+[data-theme="light"] .logo-for-dark { display: none; }
 .top-actions { display: flex; align-items: center; gap: 10px; }
 .langbtn {
   background: var(--card); color: var(--txt); border: 1px solid var(--line);

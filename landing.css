@@ -4,12 +4,14 @@
   --bg: #101210; --card: #181b18; --panel: #1e221e; --field: #121412;
   --line: #2c332c; --txt: #eceee8; --mut: #9aa39a;
   --acc: #7dd3c0; --acc-ink: #0c1f1a; --acc-soft: rgba(125, 211, 192, .12);
+  --chaos-ink: 125, 211, 192;
   --shadow: 0 18px 50px rgba(0, 0, 0, .45);
 }
 [data-theme="light"] {
   --bg: #f4f2ec; --card: #ffffff; --panel: #f8f7f2; --field: #f1efe7;
   --line: #ddd8ca; --txt: #1e201d; --mut: #5b625b;
   --acc: #0f766e; --acc-ink: #ffffff; --acc-soft: rgba(15, 118, 110, .1);
+  --chaos-ink: 15, 118, 110;
   --shadow: 0 14px 40px rgba(60, 60, 50, .12);
 }
 * { box-sizing: border-box; }
@@ -31,6 +33,9 @@ body {
   min-height: 64px;
 }
 .navbrand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--txt); font-weight: 800; font-size: 17px; flex: 1 1 auto; min-width: 0; }
+/* theme logos: light mark on dark bg, dark mark on light bg (same design) */
+[data-theme="dark"] .logo-for-light { display: none; }
+[data-theme="light"] .logo-for-dark { display: none; }
 .navbrand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .navactions { display: flex; align-items: center; gap: 10px; flex: none; }
 .langbtn {

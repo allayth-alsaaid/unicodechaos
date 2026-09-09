@@ -190,6 +190,23 @@
     // the cursor — glyphs never fade. Touch: classic column rain in the box.
     var fieldMode = fineHover && !reduce;
     var P = [], ft = 0;
+    // Theme-aware glyph ink: light teal on dark bg, dark teal on light bg.
+    // Read from --chaos-ink (r, g, b); follows the theme toggle live.
+    var ink = { r: 125, g: 211, b: 192 };
+    function readInk() {
+      try {
+        var parts = getComputedStyle(document.documentElement).getPropertyValue('--chaos-ink').split(',');
+        var r = +parts[0], g = +parts[1], b = +parts[2];
+        if (parts.length === 3 && [r, g, b].every(function (n) { return isFinite(n) && n >= 0 && n <= 255; })) {
+          ink = { r: r, g: g, b: b };
+        }
+      } catch (e) {}
+    }
+    function rgba(a) { return 'rgba(' + ink.r + ',' + ink.g + ',' + ink.b + ',' + a + ')'; }
+    readInk();
+    try {
+      new MutationObserver(readInk).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    } catch (e) { /* single theme — keep boot ink */ }
     var LAYERS = [
       { size: 13, alpha: 0.20, fall: 0.28, repel: 0.45, sway: 4 },
       { size: 17, alpha: 0.34, fall: 0.48, repel: 0.85, sway: 9 },
@@ -326,7 +343,7 @@
         if (p.y > H + 30) { p.y = -30; p.x = Math.random() * W; p.vx = 0; p.vy = 0; }
         if (p.x < -40) p.x = W + 40; else if (p.x > W + 40) p.x = -40;
         ctx.font = L.size + 'px system-ui, "Segoe UI", sans-serif';
-        ctx.fillStyle = p.accent ? 'rgba(125,211,192,0.950)' : 'rgba(125,211,192,' + L.alpha.toFixed(3) + ')';
+        ctx.fillStyle = p.accent ? rgba(0.95) : rgba(L.alpha.toFixed(3));
         ctx.fillText(p.g, p.x, p.y);
       }
     }
@@ -353,8 +370,8 @@
         if (a > 0.02) {
           var g = glyphs[(Math.random() * glyphs.length) | 0];
           var head = (i * 37 + ((drops[i] * 13) | 0)) % 5 === 0;
-          ctx.fillStyle = head ? 'rgba(125,211,192,' + (0.95 * a).toFixed(3) + ')'
-                               : 'rgba(125,211,192,' + (0.34 * a).toFixed(3) + ')';
+          ctx.fillStyle = head ? rgba((0.95 * a).toFixed(3))
+                               : rgba((0.34 * a).toFixed(3));
           ctx.fillText(g, x + dx, y);
         }
         drops[i] += 0.42;
@@ -369,7 +386,7 @@
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--field') || '#121412';
       ctx.fillRect(0, 0, W, H);
       ctx.font = fs + 'px system-ui, "Segoe UI", sans-serif';
-      ctx.fillStyle = 'rgba(125,211,192,.5)';
+      ctx.fillStyle = rgba(0.5);
       for (var i = 0; i < cols; i++) {
         for (var j = 0; j < H / fs / 2; j++) {
           if (Math.random() > 0.72) ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * fs * 1.15, j * fs * 2);
