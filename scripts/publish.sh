@@ -18,6 +18,15 @@ cp "$ROOT/index.html" "$ROOT/generator.html" \
 cp "$ROOT/js/"*.js "$DIST/js/"
 cp "$ROOT/data/"*.json "$DIST/data/"
 
+# Cache-busting: every deploy gets a fresh query string on CSS/JS refs
+# (dist copies only — repo sources untouched), so no visitor ever sees
+# a stale layout mixed with fresh scripts.
+V=$(date -u +%Y%m%d%H%M%S)
+for f in "$DIST"/index.html "$DIST"/generator.html; do
+  sed -i.bak -E "s#((landing|style)\.css|js/[a-z0-9_-]+\.js)(\?v=[0-9]+)?#\1?v=$V#g" "$f"
+  rm -f "$f.bak"
+done
+
 netlify deploy --prod --dir="$DIST" \
   --message "publish $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
