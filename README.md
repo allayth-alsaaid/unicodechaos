@@ -18,7 +18,7 @@
 
 ## What this is
 
-Unicode Chaos builds text for **pure randomness, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a uniform random engine: every script and list-category equally likely (≈1/176 each), every draw independent.
+Unicode Chaos builds text for **pure randomness, never meaning**. Letters from 170 scripts collide with symbols, numerals and emoji through a tiered random engine: familiar scripts first (≈2.5% each), list-categories in the middle (≈1.2% each), rare scripts still present (≈0.08% each) — every draw independent.
 
 It is **not readable on purpose**. It is a stress-test, a toy, and an entropy playground.
 
@@ -49,13 +49,13 @@ OS randomness (256-bit) + jitter + microsecond stamp + counter
    seed (64 hex chars)
         │  Hash-DRBG: SHA-256(seed ‖ n), ratcheted per block
         ▼
-Category → Script/Block → Character   (flat uniform pool: 170 scripts + 6 lists)
+Category → Script/Block → Character   (tiered pool: 32 core scripts + 6 lists + 138 rare scripts)
         │
         ▼
   visible text (length counted in graphemes — emoji counts as 1)
 ```
 
-- **Three-stage draw:** one uniform pick from 176 entries (170 scripts + symbols/emoji/numbers/punctuation/currency/other), then a uniform code point from the winning script — or a uniform item from the winning list. No weights, no boosts, no anti-repeat rules — proportions follow chance, not a plan.
+- **Three-stage draw:** one tiered pick from 176 entries (familiar scripts weighed up so output renders instead of tofu-boxing, rare scripts kept at a low rate), then a uniform code point from the winning script — or a uniform item from the winning list. No anti-repeat rules — chance decides within each tier.
 - **Never emitted:** combining marks and invisible/control code points (they corrupt counting and rendering).
 - **Repeats allowed:** true randomness clumps — the same script or character may appear back-to-back. Only marks/invisibles are filtered, for correctness, never for distribution.
 - **Backtracking-resistant stream:** the working key ratchets forward every block, so a leaked live state cannot reveal earlier outputs — while replaying from the published seed still reproduces everything.
@@ -264,7 +264,7 @@ Measured with the Node harness (no browser needed), not claimed on faith:
 
 | Check | Result |
 |---|---|
-| Flat uniform draw, length 17600 | 176/176 entries ≈ 1/176 each (min 71, max 139) · emoji ≈ 0.65% |
+| Tiered draw, length 17600 | core 81% · lists 7% · obscure 11% · emoji ≈ 1.3% · 176/176 entries appear |
 | Per-script isolation (single-enable + scripts-only) | 100% pure, correct labels |
 | Per-category isolate (emoji-only) | pure |
 | Empty selection | falls back to all, never breaks |

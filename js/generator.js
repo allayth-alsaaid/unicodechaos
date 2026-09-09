@@ -1,12 +1,19 @@
-// generator.js — flat uniform pool: every script and every list-category
-// equally likely (~1/176 each). Every draw independent, no weights, no bans.
+// generator.js — tiered uniform pool: familiar scripts first, everything else
+// still present. Core scripts (universal system-font support) are drawn far
+// more often; rare/historic scripts stay in the pool at a low rate so the
+// output keeps its chaos without drowning in tofu boxes.
 (function (global) {
   const R = () => global.ChaosRandom;
   const U = () => global.ChaosUnicode;
 
   const LIST_KEYS = ['symbols', 'emoji', 'numbers', 'punctuation', 'currency', 'other'];
 
-  // One entry per script plus one per list-category: 170 scripts + 6 lists.
+  // Entry weights (expectations, not quotas — every draw stays independent):
+  // core script ≈ 2.5% each (82% together), list-category ≈ 1.2% each,
+  // other script ≈ 0.08% each (~11% together: present, never flooding).
+  const CORE_W = 16, LIST_W = 8, RARE_W = 0.5;
+
+  // One entry per script plus one per list-category.
   // User selection filters the pool; an explicitly-emptied pool falls back
   // to everything (never break, never crash).
   function buildPool(data, opts, emojiOn, lists) {
@@ -20,22 +27,32 @@
         const sub = scripts.filter(s => enabledScripts.has(s.id));
         if (sub.length) scripts = sub; // empty selection falls back to all
       }
-      for (const s of scripts) pool.push({ kind: 'script', script: s });
+      for (const s of scripts) pool.push({ kind: 'script', script: s, w: s.core ? CORE_W : RARE_W });
     }
     for (const k of LIST_KEYS) {
       if (k === 'emoji' && !emojiOn) continue;
       if (!catsOn(k)) continue;
       if (!lists[k] || !lists[k].length) continue;
-      pool.push({ kind: 'list', key: k });
+      pool.push({ kind: 'list', key: k, w: LIST_W });
     }
     if (!pool.length) {
-      for (const s of data.scripts) pool.push({ kind: 'script', script: s });
+      for (const s of data.scripts) pool.push({ kind: 'script', script: s, w: s.core ? CORE_W : RARE_W });
       for (const k of LIST_KEYS) {
         if (k === 'emoji' && !emojiOn) continue;
-        if (lists[k] && lists[k].length) pool.push({ kind: 'list', key: k });
+        if (lists[k] && lists[k].length) pool.push({ kind: 'list', key: k, w: LIST_W });
       }
     }
     return pool;
+  }
+
+  // Weighted pick over entries with a numeric w field.
+  function weightedPick(entries) {
+    let total = 0;
+    for (const e of entries) total += Math.max(0, e.w);
+    if (total <= 0) return entries[entries.length - 1];
+    let r = R().float() * total;
+    for (const e of entries) { r -= Math.max(0, e.w); if (r <= 0) return e; }
+    return entries[entries.length - 1];
   }
 
   function generate(data, opts) {
@@ -72,10 +89,10 @@
     const out = [];         // grapheme units (emoji = 1 unit)
     const meta = [];        // parallel script/list labels for stats
 
-    // One pipeline step: uniform entry -> uniform char.
+    // One pipeline step: tiered entry -> uniform char.
     // Returns true when a unit was appended.
     function step() {
-      const e = R().pick(pool);
+      const e = weightedPick(pool);
       let ch = '', label;
       if (e.kind === 'script') {
         ch = U().randomCharFromScript(e.script, emojiOff);

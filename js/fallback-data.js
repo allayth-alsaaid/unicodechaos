@@ -2,6 +2,7 @@ window.__CHAOS_FALLBACK__={scripts:
 [
   {
     "id": "latin",
+    "core": true,
     "name": "Latin",
     "type": "modern",
     "rare": false,
@@ -39,6 +40,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "arabic",
+    "core": true,
     "name": "Arabic",
     "type": "modern",
     "rare": false,
@@ -67,6 +69,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "hebrew",
+    "core": true,
     "name": "Hebrew",
     "type": "modern",
     "rare": false,
@@ -79,6 +82,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "cyrillic",
+    "core": true,
     "name": "Cyrillic",
     "type": "modern",
     "rare": false,
@@ -103,6 +107,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "greek",
+    "core": true,
     "name": "Greek",
     "type": "modern",
     "rare": false,
@@ -135,6 +140,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "armenian",
+    "core": true,
     "name": "Armenian",
     "type": "modern",
     "rare": true,
@@ -151,6 +157,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "georgian",
+    "core": true,
     "name": "Georgian",
     "type": "modern",
     "rare": true,
@@ -167,6 +174,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "devanagari",
+    "core": true,
     "name": "Devanagari",
     "type": "modern",
     "rare": false,
@@ -179,6 +187,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "bengali",
+    "core": true,
     "name": "Bengali",
     "type": "modern",
     "rare": true,
@@ -191,6 +200,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "gurmukhi",
+    "core": true,
     "name": "Gurmukhi",
     "type": "modern",
     "rare": true,
@@ -203,6 +213,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "gujarati",
+    "core": true,
     "name": "Gujarati",
     "type": "modern",
     "rare": true,
@@ -215,6 +226,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "oriya",
+    "core": true,
     "name": "Oriya",
     "type": "modern",
     "rare": true,
@@ -227,6 +239,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "tamil",
+    "core": true,
     "name": "Tamil",
     "type": "modern",
     "rare": true,
@@ -239,6 +252,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "telugu",
+    "core": true,
     "name": "Telugu",
     "type": "modern",
     "rare": true,
@@ -251,6 +265,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "kannada",
+    "core": true,
     "name": "Kannada",
     "type": "modern",
     "rare": true,
@@ -263,6 +278,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "malayalam",
+    "core": true,
     "name": "Malayalam",
     "type": "modern",
     "rare": true,
@@ -275,6 +291,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "sinhala",
+    "core": true,
     "name": "Sinhala",
     "type": "modern",
     "rare": true,
@@ -287,6 +304,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "thai",
+    "core": true,
     "name": "Thai",
     "type": "modern",
     "rare": false,
@@ -299,6 +317,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "lao",
+    "core": true,
     "name": "Lao",
     "type": "modern",
     "rare": true,
@@ -319,6 +338,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "khmer",
+    "core": true,
     "name": "Khmer",
     "type": "modern",
     "rare": true,
@@ -331,6 +351,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "myanmar",
+    "core": true,
     "name": "Myanmar",
     "type": "modern",
     "rare": true,
@@ -403,6 +424,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "ethiopic",
+    "core": true,
     "name": "Ethiopic",
     "type": "modern",
     "rare": true,
@@ -595,6 +617,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "tibetan",
+    "core": true,
     "name": "Tibetan",
     "type": "modern",
     "rare": true,
@@ -635,6 +658,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "cherokee",
+    "core": true,
     "name": "Cherokee",
     "type": "modern",
     "rare": true,
@@ -647,6 +671,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "hiragana",
+    "core": true,
     "name": "Hiragana",
     "type": "cjk",
     "rare": false,
@@ -659,6 +684,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "katakana",
+    "core": true,
     "name": "Katakana",
     "type": "cjk",
     "rare": false,
@@ -671,6 +697,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "hangul",
+    "core": true,
     "name": "Hangul Syllables",
     "type": "cjk",
     "rare": false,
@@ -683,6 +710,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "cjk",
+    "core": true,
     "name": "CJK Unified Ideographs",
     "type": "cjk",
     "rare": false,
@@ -867,6 +895,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "bopomofo",
+    "core": true,
     "name": "Bopomofo",
     "type": "cjk",
     "rare": true,
@@ -879,6 +908,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "hangul_jamo",
+    "core": true,
     "name": "Hangul Jamo",
     "type": "cjk",
     "rare": true,
@@ -891,6 +921,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "katakana_phonetic",
+    "core": true,
     "name": "Katakana Phonetic Ext.",
     "type": "cjk",
     "rare": true,
@@ -903,6 +934,7 @@ window.__CHAOS_FALLBACK__={scripts:
   },
   {
     "id": "cjk_ext_a",
+    "core": true,
     "name": "CJK Ext. A",
     "type": "cjk",
     "rare": true,
